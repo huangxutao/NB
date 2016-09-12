@@ -1,0 +1,8 @@
+<h1 class="wrapper-header"><i class="fa fa-smile-o"></i> 插入表情</h1>
+<div class="wrapper-content">
+  <ul class="expressions">
+    {{#each emojis}}
+      <li title="{{this}}"><img src="../backend/emojis/{{this}}" alt="{{this}}" /></li>
+    {{/each}}
+  </ul>
+</div>

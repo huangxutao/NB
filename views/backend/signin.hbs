@@ -1,0 +1,17 @@
+{{#extend "stylesheets"}}
+  <link rel="stylesheet" href="../backend/css/signin.css">
+  <link rel="stylesheet" href="../backend/css/font-awesome.min.css">
+{{/extend}}
+
+<form action="" class="signin">
+  <h1><i class="fa fa-wrench"></i> Do Manage</h1>
+  <p><i class="fa fa-user" aria-hidden="true"></i><input type="text" placeholder="User Name" autofocus required id="user"></p>
+  <p><i class="fa fa-lock"></i><input type="password" placeholder="PassWord" required id="password"></p>
+  <p class="warning"></p>
+  <p class="submit"><input type="submit" value="Enter"><i class="fa fa-chevron-right"></i></p>
+</form>
+
+{{#extend "scripts"}}
+  <script src="../backend/js/tools.js"></script>
+  <script src="../backend/js/signin.js"></script>
+{{/extend}}
