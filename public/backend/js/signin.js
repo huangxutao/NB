@@ -24,7 +24,7 @@
           success: function(request) {
             var res = JSON.parse(request.responseText);
 
-            if(res.result === 'success') {
+            if(res.status === 'success') {
               window.location = '/do-manage';
             } else {
               a.className = 'fa fa-chevron-right';

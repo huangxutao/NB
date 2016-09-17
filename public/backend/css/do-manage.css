@@ -60,6 +60,7 @@ input{
   border: .1rem solid #ecedf1;
   border-radius: .28rem;
   box-sizing: border-box;
+  outline-color: #35bdb2;
 }
 
 input:focus, button:focus{
@@ -84,6 +85,10 @@ button[name="cancle"]{
 button[name="confirm"]{
   color: #fff;
   background: #35bdb2;
+}
+
+button[name="confirm"] i{
+  font-size: 1rem;
 }
 
 button:hover{
@@ -511,11 +516,16 @@ ul.expressions li img:active{
 }
 
 .tab-pages{
-  height: 12rem;
+  position: absolute;
+  top: 4rem;
+  right: 0;
+  bottom: 0;
+  left: 0;
   border: .1rem solid #D4D4D5;
   border-top: none;
   border-bottom-left-radius: .28rem;
   border-bottom-right-radius: .28rem;
+  overflow: auto;
 }
 /* 选项卡组件 --- End */
 
@@ -523,24 +533,37 @@ ul.expressions li img:active{
 /* 状态信息(操作是否成功) --- Start */
 .status-msg{
   position: fixed;
-  top: 2rem;
+  top: 4rem;
   right: 0;
   left: 0;
   text-align: center;
   -webkit-user-select: none;
   cursor: default;
   z-index: 999;
+  transition: all .6s ease;
 }
 
 .status-msg span{
   padding: 1rem 2rem;
   color: #fff;
   border-radius: .28rem;
+}
+
+.ok span{
   background: #35bdb2;
+}
+
+.error span{
+  background: #ec4c40;
 }
 
 .status-msg span i{
   margin-right: .6rem;
+}
+
+.hide-status-msg{
+  opacity: 0;
+  transform: translateY(-150%);
 }
 /* 状态信息(操作是否成功) --- End */
 
@@ -551,27 +574,6 @@ ul.expressions li img:active{
 
 .hide{
   display: none!important;
-}
-
-/* 过渡效果样式 -- Start */
-.slide-up{
-  opacity: 0;
-  transform: translateY(-100%);
-}
-
-.slide-right{
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.slide-down{
-  opacity: 0;
-  transform: translateY(100%);
-}
-
-.slide-left{
-  opacity: 0;
-  transform: translateX(-100%);
 }
 
 /* 过渡效果样式 -- End */

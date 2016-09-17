@@ -17,7 +17,7 @@ var tools = (function(mod) {
 	};
 
 	mod.toggleClass = function(obj, cls) {
-		return (!this.hasClass(obj, cls)) ? this.addClass( obj, cls) : this.removeClass( obj, cls);
+		return (!this.hasClass(obj, cls)) ? this.addClass(obj, cls) : this.removeClass(obj, cls);
 	};
 
   mod.isEmpty = function (obj) {
@@ -59,15 +59,6 @@ var tools = (function(mod) {
 
   mod.getStyle = function (obj, attr) {
     return obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj,false)[attr];
-  };
-
-  mod.transition = function(obj, name, duration) {
-    var time = duration || 3000;
-    obj.style.transition = 'all ' + time/1000 + 's ease';
-    this.toggleClass(obj, name);
-    setTimeout(function() {
-      tools.toggleClass(obj, 'hide');
-    }, time);
   };
 
 	return mod;
