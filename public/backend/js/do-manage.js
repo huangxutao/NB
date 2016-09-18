@@ -1,8 +1,8 @@
 ;(function(doc, win) {
 
-  /**
+  /*****************************************************
    * 构造编辑器
-   */
+   *****************************************************/
   function Editor(configuration) {
     var self = this;
 
@@ -10,6 +10,7 @@
     this.preview_area  = configuration.preview_area;
     this.remote_server = configuration.remote_server || '';
     this.url           = configuration.url;
+    this.placeholder   = configuration.placeholder || '';
     this.CodeMirror = CodeMirror(this.editing_area, {
       tabSize: 2,
       autofocus: true,
@@ -17,9 +18,16 @@
       lineWrapping: true
     });
 
+    this.setValue(this.placeholder);
+
     if(configuration.auto_marked) {
+      var value = '';
+
       this.editing_area.addEventListener('keyup', function(event) {
-        self.preview_area.innerHTML = marked(self.getValue());
+        if(value !== self.getValue()) {
+          self.preview_area.innerHTML = marked(self.getValue());
+        }
+        value = self.getValue();
       }, false);
     }
 
@@ -134,14 +142,9 @@
    */
   Editor.prototype.publishPost = function(cb) {
     var editor = this;
-    var title = doc.querySelector('.preview-content h1');
     var post_title = doc.querySelector('#post-title');
     var post_tag = doc.querySelector('#post-tag');
     var post_category = doc.querySelector('#post-category');
-
-    if(title) {
-      post_title.value = title.innerText;
-    }
 
     var post = {
       title: post_title.value,
@@ -151,11 +154,9 @@
       isDraft: false
     };
 
-    console.log(post);
-
     this.connectServer({
       type: 'POST',
-      url: this.url.publish,
+      url: editor.url.publish,
       data: post,
       success: cb
     });
@@ -168,14 +169,9 @@
    */
   Editor.prototype.saveDraft = function(cb) {
     var editor = this;
-    var title = doc.querySelector('.preview-content h1');
     var post_title = doc.querySelector('#post-title');
     var post_tag = doc.querySelector('#post-tag');
     var post_category = doc.querySelector('#post-category');
-
-    if(title) {
-      post_title.value = title.innerText;
-    }
 
     var post = {
       title: post_title.value,
@@ -187,7 +183,7 @@
 
     this.connectServer({
       type: 'POST',
-      url: this.url.draft,
+      url: editor.url.draft,
       data: post,
       success: cb
     });
@@ -234,6 +230,7 @@
     preview_area : doc.querySelector('.preview-content'),
     auto_marked: true,
     sync_scroll: true,
+    placeholder: '# Welcome To Use NB',
     url: {
       publish: '/to-publish',
       edite: '/to-edite',
@@ -264,298 +261,364 @@
     // 确认提交
     confirm: function(cb) {
       var confirm = doc.querySelector('.confirm');
-
-      confirm.addEventListener('click', function() {
+      var fn = function() {
         this.innerHTML = '确认 <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>';
         cb();
-      }, false);
+        confirm.removeEventListener('click', fn, false);
+      };
+
+      confirm.addEventListener('click', fn, false);
     },
 
     // 取消提交
     cancle: function() {
       var cancle = doc.querySelector('.cancle');
-
-      cancle.addEventListener('click', function() {
+      var fn = function() {
         Button.clearData();
-        Modal.hide();
-      }, false);
+        NB.Modal.hide();
+        cancle.removeEventListener('click', fn, false);
+      };
+
+      cancle.addEventListener('click', fn, false);
     }
   };
 
-  /***
-   * 弹出层
-   */
-  var Modal = {
-    modal: doc.querySelector('.modal'),
-    modal_content: doc.querySelector('.modal-content'),
 
-    //显示弹出层
-    show: function() {
-      tools.addClass(Modal.modal, 'show-modal');
+
+  /*****************************************************
+   * NB 后台管理
+   *****************************************************/
+  var NB = {
+
+    /***
+     * 内容区
+     */
+    Contents: {
+      edite: doc.querySelector('.markdown-content'),
+      preview: doc.querySelector('.preview-content')
     },
 
-    // 隐藏弹出层
-    hide: function() {
-      tools.removeClass(Modal.modal, 'show-modal');
-      Button.clearData();
-    },
+    /***
+     * 工具栏
+     */
+    ToolBar: {
+      toolbar: doc.querySelector('.toolbar'),
+      menus: {
+        new: doc.querySelector('#new-post'),
+        publish: doc.querySelector('#publish-post'),
+        save: doc.querySelector('#save-draft'),
+        update: doc.querySelector('#update-post'),
+        preview: doc.querySelector('#preview-post'),
+        expression: doc.querySelector('#insert-expression'),
+        setting: doc.querySelector('#setting')
+      },
 
-    // 初始化弹出层
-    init: function() {
-      var self = this;
+      displayMenu: function() {
 
-      self.show();
-
-      function stopBubble(e) {
-        e.stopPropagation();  //停止冒泡
-      }
-
-      function unbindHandler() {
-        self.modal.removeEventListener('click', self.hide, false);
-        self.modal_content.removeEventListener('click', stopBubble, false);
-      }
-
-      function bindHandler() {
-        self.modal.addEventListener('click', self.hide, false);
-        self.modal_content.addEventListener('click', stopBubble, false);
-      }
-
-      unbindHandler();
-      bindHandler();
-    }
-  };
-
-  /***
-   * 侧栏
-   */
-  var SideBar = {
-    slider: doc.querySelector('.sidebar-slider'),
-    content: doc.querySelector('.sidebar'),
-    besides: doc.querySelector('.contents'),
-
-    // 显示侧栏
-    show: function() {
-      tools.addClass(SideBar.besides, 'pushable');
-    },
-
-    // 隐藏侧栏
-    hide: function() {
-      tools.removeClass(SideBar.besides, 'pushable');
-    },
-
-    // 移除节点 (文章列表)
-    removeNode: function(e) {
-      var childNode = e.target.parentNode;
-      var parentNode = e.target.parentNode.parentNode;
-      parentNode.removeChild(childNode);
-    },
-
-    // 添加节点 (文章列表)
-    addNode: function(value) {
-      var posts = doc.querySelector('.tab-pages');
-      var str = value;
-      var p = doc.createElement('p');
-
-      p.innerHTML = str;
-      posts.appendChild(p);
-    },
-
-    // 初始化
-    init: function() {
-      var posts = doc.querySelector('.tab-pages');
-
-      doc.addEventListener('click', function(e) {
-        if(e.target.className === 'sidebar-slider' || e.target.className === 'fa fa-book') {
-          SideBar.show();
-        } else{
-          SideBar.hide();
+        // 有文字时 显示新建 menu (初始化时)
+        if(myEditor.getValue() !== '') {
+          tools.removeClass(NB.ToolBar.menus.new, 'hide');
         }
-      }, false);
 
-      SideBar.content.addEventListener('click', function(e) {
-        e.stopPropagation();
-        if(e.target.tagName === 'I' && /remove/.test(e.target.className )) {
-          if(confirm('确认删除该文章？\n\n警告，骚年三思而后行！\n\n！！！！！！该操作不可逆！！！！！！！\n')) {
-            SideBar.removeNode(e);
+        // 编辑区全屏时 显示预览 menu
+        if(tools.hasClass(NB.Contents.edite, 'full-content')) {
+          tools.removeClass(NB.ToolBar.menus.preview, 'hide');
+        }
+
+        // 有文字时 显示新建 menu (实时)
+        NB.Contents.edite.addEventListener('keyup', function() {
+          if(myEditor.getValue() !== '') {
+            tools.removeClass(NB.ToolBar.menus.new, 'hide');
+          } else {
+            tools.addClass(NB.ToolBar.menus.new, 'hide');
           }
+        }, false);
+
+      },
+
+      // 新建文章
+      newPost: function() {
+        myEditor.newPost.bind(myEditor);
+      },
+
+      // 显示提示信息
+      displayStatusMsg: function(type, msg) {
+        var text = doc.querySelector('.status-msg');
+
+        tools.removeClass(text, 'hide');
+
+        if(type === 'success') {
+          text.children[0].innerHTML = '<i class="fa fa-check-square-o"></i> ' + msg;
+          tools.addClass(text, 'ok');
+        } else {
+          text.children[0].innerHTML = '<i class="fa fa-exclamation-triangle"></i> ' + msg;
+          tools.addClass(text, 'error');
         }
-      }, false);
 
-      // 获取文章列表
-      posts.addEventListener('scroll', function() {
-        var scrollTop = posts.scrollTop;
-        var scrollHeight = posts.scrollHeight;
-        var clientHeight = posts.clientHeight;
-        var page = this.children.length;
+        tools.removeClass(text, 'hide-status-msg');
 
-        scrollTop = posts.scrollTop;
-        scrollHeight = posts.scrollHeight;
-        clientHeight = posts.clientHeight;
+        setTimeout(function() {
+          tools.addClass(text, 'hide-status-msg');
+        }, 3000);
 
-        if(scrollTop === (scrollHeight - clientHeight)) {
-          console.log(0);
+        setTimeout(function() {
+          tools.removeClass(text, 'ok');
+          tools.removeClass(text, 'error');
+          tools.addClass(text, 'hide');
+        },4000);
+      },
+
+      // 弹窗控制
+      displayModal: function(num) {
+        var items = doc.querySelectorAll('.modal .item');
+
+        for(var i = 0, len = items.length; i < len; i++) {
+          tools.addClass(items[i], 'hide');
+        }
+        tools.toggleClass(items[num], 'hide');
+      },
+
+      // 发布文章
+      publishPost: function() {
+        var wrapper_header = doc.querySelector('.wrapper-header');
+        var title = doc.querySelector('.preview-content h1');
+        var post_title = doc.querySelector('#post-title');
+
+        if(title) {
+          post_title.value = title.innerText;
         }
 
-      }, false);
-    }
-  };
-
-  /***
-   * 工具栏
-   */
-  var ToolBar = {
-    toolbar: doc.querySelector('.toolbar'),
-
-    newPost: myEditor.newPost.bind(myEditor),
-
-    // 显示提示信息
-    displayStatusMsg: function(type, msg) {
-      var text = doc.querySelector('.status-msg');
-
-      if(type === 'success') {
-        text.children[0].innerHTML = '<i class="fa fa-check-square-o"></i> ' + msg;
-        tools.addClass(text, ' ok');
-      } else {
-        text.children[0].innerHTML = '<i class="fa fa-exclamation-triangle"></i> ' + msg;
-        tools.addClass(text, ' error');
-      }
-
-      tools.removeClass(text, 'hide-status-msg');
-
-      setTimeout(function() {
-        tools.addClass(text, 'hide-status-msg');
-        tools.removeClass(text, ' ok');
-        tools.removeClass(text, ' error');
-      }, 3000);
-    },
-
-    // 弹窗控制
-    displayModal: function(num) {
-      var items = doc.querySelectorAll('.modal .item');
-
-      for(var i = 0, len = items.length; i < len; i++) {
-        tools.addClass(items[i], 'hide');
-      }
-      tools.toggleClass(items[num], 'hide');
-    },
-
-    // 发布文章
-    publishPost: function() {
-      var wrapper_header = doc.querySelector('.wrapper-header');
-      var title = doc.querySelector('.preview-content h1');
-      var post_title = doc.querySelector('#post-title');
-
-      if(title) {
-        post_title.value = title.innerText;
-      }
-
-      wrapper_header.innerHTML = '<i class="fa fa-paper-plane"></i> 发布文章';
-      this.displayModal(0);
-      Button.confirm(function() {
-        myEditor.publishPost(function(request) {
-          var res = JSON.parse(request.responseText);
-          Modal.hide();
-          ToolBar.displayStatusMsg(res.status, res.detail);
+        wrapper_header.innerHTML = '<i class="fa fa-paper-plane"></i> 发布文章';
+        this.displayModal(0);
+        Button.confirm(function() {
+          console.log('hehe');
+          myEditor.publishPost(function(request) {
+            var res = JSON.parse(request.responseText);
+            NB.Modal.hide();
+            NB.ToolBar.displayStatusMsg(res.status, res.detail);
+          });
         });
-      });
-      Button.cancle();
-    },
+        Button.cancle();
+      },
 
-    // 保存为草稿
-    saveDraft: function() {
-      var wrapper_header = doc.querySelector('.wrapper-header');
-      var title = doc.querySelector('.preview-content h1');
-      var post_title = doc.querySelector('#post-title');
+      // 保存为草稿
+      saveDraft: function() {
+        var wrapper_header = doc.querySelector('.wrapper-header');
+        var title = doc.querySelector('.preview-content h1');
+        var post_title = doc.querySelector('#post-title');
 
-      if(title) {
-        post_title.value = title.innerText;
-      }
+        if(title) {
+          post_title.value = title.innerText;
+        }
 
-      wrapper_header.innerHTML = '<i class="fa fa-coffee"></i> 保存为草稿';
-      this.displayModal(0);
-      Button.confirm(function() {
-        myEditor.saveDraft(function(request) {
-          var res = JSON.parse(request.responseText);
-          ToolBar.displayStatusMsg(res.status, res.detail);
+        wrapper_header.innerHTML = '<i class="fa fa-coffee"></i> 保存为草稿';
+        this.displayModal(0);
+        Button.confirm(function() {
+          myEditor.saveDraft(function(request) {
+            var res = JSON.parse(request.responseText);
+            NB.Modal.hide();
+            NB.ToolBar.displayStatusMsg(res.status, res.detail);
+          });
         });
-      });
-      Button.cancle();
-    },
+        Button.cancle();
+      },
 
-    // 更新文章
-    updatePost: function() {
-      var wrapper_header = doc.querySelector('.wrapper-header');
+      // 更新文章
+      updatePost: function() {
+        var wrapper_header = doc.querySelector('.wrapper-header');
 
-      wrapper_header.innerHTML = '<i class="fa fa-refresh"></i> 更新文章';
-      this.displayModal(0);
+        wrapper_header.innerHTML = '<i class="fa fa-refresh"></i> 更新文章';
+        this.displayModal(0);
 
-    },
+      },
 
-    // 预览文章 (主要针对小屏幕)
-    previewPost: function() {},
+      // 预览文章 (主要针对小屏幕)
+      previewPost: function() {},
 
-    // 插入表情
-    insertExpression: function() {
-      this.displayModal(1);
-    },
+      // 插入表情
+      insertExpression: function() {
+        this.displayModal(1);
+      },
 
-    // 设置
-    doSetting: function() {
-      this.displayModal(2);
-    },
+      // 设置
+      doSetting: function() {
+        this.displayModal(2);
+      },
 
-    // 初始化
-    init: function() {
-      this.toolbar.addEventListener('click', function(e) {
-        var self = this;
-        var items = doc.querySelectorAll('.item');
+      // 初始化
+      init: function() {
+        this.displayMenu();
 
-        if(/tab-btn/.test(e.target.className)) {
-          for(var i = 0, len = items.length; i < len; i++) {
-            tools.addClass(items[i], 'hide');
+        var fn = function(e) {
+          var self = this;
+          var items = doc.querySelectorAll('.item');
+
+          if(/tab-btn/.test(e.target.className)) {
+            for(var i = 0, len = items.length; i < len; i++) {
+              tools.addClass(items[i], 'hide');
+            }
+            NB.Modal.init();
           }
-          Modal.init();
+
+          switch (e.target.id) {
+            case 'new-post':
+              NB.ToolBar.newPost();
+              break;
+
+            case 'publish-post':
+              NB.ToolBar.publishPost();
+              break;
+
+            case 'save-draft':
+              NB.ToolBar.saveDraft();
+              break;
+
+            case 'update-post':
+              NB.ToolBar.updatePost();
+              break;
+
+            case 'preview-post':
+              NB.ToolBar.previewPost();
+              break;
+
+            case 'insert-expression':
+              NB.ToolBar.insertExpression();
+              break;
+
+            case 'setting':
+              NB.ToolBar.doSetting();
+              break;
+          }
+        };
+
+        NB.ToolBar.toolbar.addEventListener('click', fn, false);
+      }
+    },
+
+    /***
+     * 弹出层
+     */
+    Modal: {
+      modal_wrapper: doc.querySelector('.modal'),
+      modal_content: doc.querySelector('.modal-content'),
+
+      //显示弹出层
+      show: function() {
+        tools.addClass(NB.Modal.modal_wrapper, 'show-modal');
+      },
+
+      // 隐藏弹出层
+      hide: function() {
+        tools.removeClass(NB.Modal.modal_wrapper, 'show-modal');
+        Button.clearData();
+      },
+
+      // 初始化弹出层
+      init: function() {
+        NB.Modal.show();
+
+        function stopBubble(e) {
+          e.stopPropagation();  //停止冒泡
         }
 
-        switch (e.target.id) {
-          case 'new-post':
-            ToolBar.newPost();
-            break;
-
-          case 'publish-post':
-            ToolBar.publishPost();
-            break;
-
-          case 'save-draft':
-            ToolBar.saveDraft();
-            break;
-
-          case 'update-post':
-            ToolBar.updatePost();
-            break;
-
-          case 'preview-post':
-            ToolBar.previewPost();
-            break;
-
-          case 'insert-expression':
-            ToolBar.insertExpression();
-            break;
-
-          case 'setting':
-            ToolBar.doSetting();
-            break;
+        function unbindHandler() {
+          NB.Modal.modal_wrapper.removeEventListener('click', NB.Modal.hide, false);
+          NB.Modal.modal_content.removeEventListener('click', stopBubble, false);
         }
-      }, false);
-    }
+
+        function bindHandler() {
+          NB.Modal.modal_wrapper.addEventListener('click', NB.Modal.hide, false);
+          NB.Modal.modal_content.addEventListener('click', stopBubble, false);
+        }
+
+        unbindHandler();
+        bindHandler();
+      }
+    },
+
+    /***
+     * 侧栏
+     */
+    SideBar: {
+      slider: doc.querySelector('.sidebar-slider'),
+      content: doc.querySelector('.sidebar'),
+      besides: doc.querySelector('.contents'),
+
+      // 显示侧栏
+      show: function() {
+        tools.addClass(SideBar.besides, 'pushable');
+      },
+
+      // 隐藏侧栏
+      hide: function() {
+        tools.removeClass(SideBar.besides, 'pushable');
+      },
+
+      // 移除节点 (文章列表)
+      removeNode: function(e) {
+        var childNode = e.target.parentNode;
+        var parentNode = e.target.parentNode.parentNode;
+        parentNode.removeChild(childNode);
+      },
+
+      // 添加节点 (文章列表)
+      addNode: function(value) {
+        var posts = doc.querySelector('.tab-pages');
+        var str = value;
+        var p = doc.createElement('p');
+
+        p.innerHTML = str;
+        posts.appendChild(p);
+      },
+
+      // 初始化
+      init: function() {
+        var posts = doc.querySelector('.tab-pages');
+
+        doc.addEventListener('click', function(e) {
+          if(e.target.className === 'sidebar-slider' || e.target.className === 'fa fa-book') {
+            SideBar.show();
+          } else{
+            SideBar.hide();
+          }
+        }, false);
+
+        SideBar.content.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if(e.target.tagName === 'I' && /remove/.test(e.target.className )) {
+            if(confirm('确认删除该文章？\n\n警告，骚年三思而后行！\n\n！！！！！！该操作不可逆！！！！！！！\n')) {
+              SideBar.removeNode(e);
+            }
+          }
+        }, false);
+
+        // 获取文章列表
+        posts.addEventListener('scroll', function() {
+          var scrollTop = posts.scrollTop;
+          var scrollHeight = posts.scrollHeight;
+          var clientHeight = posts.clientHeight;
+          var page = this.children.length;
+
+          scrollTop = posts.scrollTop;
+          scrollHeight = posts.scrollHeight;
+          clientHeight = posts.clientHeight;
+
+          if(scrollTop === (scrollHeight - clientHeight)) {
+            console.log(0);
+          }
+
+        }, false);
+      }
+    },
+
+    setUp: function() {
+      // this.SideBar.init();
+      this.ToolBar.init();
+    },
+
   };
 
   // 初始化后台
-  function setUp() {
-    SideBar.init();
-    ToolBar.init();
-  }
-
-  setUp();
+  NB.setUp();
 
 }(document, window));

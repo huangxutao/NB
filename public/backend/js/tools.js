@@ -5,7 +5,7 @@ var tools = (function(mod) {
 
 	mod.addClass = function(obj, cls) {
 		if(!this.hasClass(obj, cls)){
-      obj.className += ' '+ cls;
+      obj.className += '  '+ cls;
     }
 	};
 
@@ -59,6 +59,19 @@ var tools = (function(mod) {
 
   mod.getStyle = function (obj, attr) {
     return obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj,false)[attr];
+  };
+
+  mod.transition = function(obj, name, duration) {
+    var time = duration || 3000;
+    obj.style.transition = 'all ' + time/1000 + 's ease';
+    tools.toggleClass(obj, name);
+    setTimeout(function() {
+      tools.toggleClass(obj, name);
+    }, time);
+
+    setTimeout(function() {
+      tools.toggleClass(obj, 'hide');
+    }, time);
   };
 
 	return mod;

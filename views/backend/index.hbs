@@ -4,20 +4,20 @@
   <link rel="stylesheet" href="../backend/css/codemirror.css">
 {{/extend}}
 <!-- 提示信息 -->
-<div class="status-msg hide-status-msg"><span></span></div>
+<div class="status-msg hide-status-msg hide"><span></span></div>
 <div class="contents">
   <div class="sidebar-slider"><i class="fa fa-book"><span class="tooltip">所有文章</span></i></div>
   <div class="toolbar">
-    <a href="#action=new"><i id="new-post" class="fa fa-pencil"><span class="tooltip">新建博文</span></i></a>
+    <a href="#action=new"><i id="new-post" class="fa fa-pencil hide"><span class="tooltip">新建博文</span></i></a>
     <a href="#action=publish"><i id="publish-post" class="fa fa-paper-plane tab-btn"><span class="tooltip">发布文章</span></i></a>
     <a href="#action=update"><i id="update-post" class="fa fa-refresh tab-btn hide"><span class="tooltip">更新博文</span></i></a>
-    <a href="#action=draft"><i id="save-draft" class="fa fa-coffee tab-btn"><span class="tooltip">存为草稿</span></i></a>
-    <i id="preview-post" class="fa fa-desktop"><span class="tooltip">预览</span></i>
+    <!-- <a href="#action=draft"><i id="save-draft" class="fa fa-coffee tab-btn"><span class="tooltip">存为草稿</span></i></a> -->
+    <i id="preview-post" class="fa fa-desktop hide"><span class="tooltip">预览</span></i>
     <i id="insert-expression" class="fa fa-smile-o tab-btn"><span class="tooltip">插入表情</span></i>
     <a href="#action=setting"><i id="setting" class="fa fa-cog tab-btn"><span class="tooltip">设置</span></i></a>
   </div>
   <!-- markdown 编辑区 -->
-  <div class="markdown-content"></div>
+  <div class="markdown-content full-content"></div>
   <!-- markdown 预览区 -->
   <div class="preview-content markdown-body"></div>
 </div>
