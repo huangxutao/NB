@@ -145,13 +145,14 @@
     var post_title = doc.querySelector('#post-title');
     var post_tag = doc.querySelector('#post-tag');
     var post_category = doc.querySelector('#post-category');
+    var is_draft = doc.querySelector('#is-draft');
 
     var post = {
       title: post_title.value,
       content: editor.getValue(),
       tags: post_tag.value,
       category: post_category.value,
-      isDraft: false
+      isDraft: is_draft.checked
     };
 
     this.connectServer({
@@ -163,31 +164,31 @@
 
   };
 
-  /**
-   * 保存为草稿
-   * @param { Function } 保存成功后的回调
-   */
-  Editor.prototype.saveDraft = function(cb) {
-    var editor = this;
-    var post_title = doc.querySelector('#post-title');
-    var post_tag = doc.querySelector('#post-tag');
-    var post_category = doc.querySelector('#post-category');
-
-    var post = {
-      title: post_title.value,
-      content: editor.getValue(),
-      tags: post_tag.value,
-      category: post_category.value,
-      isDraft: true
-    };
-
-    this.connectServer({
-      type: 'POST',
-      url: editor.url.draft,
-      data: post,
-      success: cb
-    });
-  };
+  // /**
+  //  * 保存为草稿
+  //  * @param { Function } 保存成功后的回调
+  //  */
+  // Editor.prototype.saveDraft = function(cb) {
+  //   var editor = this;
+  //   var post_title = doc.querySelector('#post-title');
+  //   var post_tag = doc.querySelector('#post-tag');
+  //   var post_category = doc.querySelector('#post-category');
+  //
+  //   var post = {
+  //     title: post_title.value,
+  //     content: editor.getValue(),
+  //     tags: post_tag.value,
+  //     category: post_category.value,
+  //     isDraft: true
+  //   };
+  //
+  //   this.connectServer({
+  //     type: 'POST',
+  //     url: editor.url.draft,
+  //     data: post,
+  //     success: cb
+  //   });
+  // };
 
   /**
    * 更新文章
@@ -195,16 +196,19 @@
    */
   Editor.prototype.updatePost = function(cb) {
     var editor = this;
+    var post_id = doc.querySelector('#update-post').getAttribute('data-id');
     var post_title = doc.querySelector('#post-title');
     var post_tag = doc.querySelector('#post-tag');
     var post_category = doc.querySelector('#post-category');
+    var is_draft = doc.querySelector('#is-draft');
 
     var post = {
+      id: post_id,
       title: post_title.value,
       content: editor.getValue(),
       tags: post_tag.value,
       category: post_category.value,
-      isDraft: false
+      isDraft: is_draft.checked
     };
 
     this.connectServer({
@@ -214,6 +218,23 @@
       success: cb
     });
   };
+
+ /**
+  * 删除文章
+  * @param { Function } 更新成功后的回调
+  */
+ Editor.prototype.deletePost = function(id, cb) {
+   var editor = this;
+
+   this.connectServer({
+     type: 'POST',
+     url: this.url.delete,
+     data: {
+       id: id
+     },
+     success: cb
+   });
+ };
 
   /**
    * 解析 markdown 文章
@@ -233,7 +254,7 @@
     placeholder: '# Welcome To Use NB',
     url: {
       publish: '/to-publish',
-      edite: '/to-edite',
+      update: '/to-update',
       delete: '/to-delete',
       draft: '/to-save-draft',
       get_posts: '/get-posts'
@@ -244,42 +265,45 @@
    * 按钮组件
    */
   var Button = {
+    isBind: false,
+    confirm_btn: doc.querySelector('.confirm'),
+    cancle_btn : doc.querySelector('.cancle'),
+
     // 清除输入框的 value
     clearData: function() {
       var input = doc.querySelectorAll('.modal input');
-      var confirm = doc.querySelector('.confirm');
 
-      confirm.innerHTML = '确认';
+      Button.confirm_btn.innerHTML = '确认';
 
-      setTimeout(function() {
-        for(var i = 0, len = input.length; i < len; i++) {
-          input[i].value = '';
-        }
-      }, 1000);
+      for(var i = 0, len = input.length; i < len; i++) {
+        input[i].value = '';
+      }
     },
 
     // 确认提交
     confirm: function(cb) {
-      var confirm = doc.querySelector('.confirm');
       var fn = function() {
         this.innerHTML = '确认 <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>';
         cb();
-        confirm.removeEventListener('click', fn, false);
+        Button.confirm_btn.removeEventListener('click', fn, false);
+        Button.isBind = false;
       };
 
-      confirm.addEventListener('click', fn, false);
+      if(!Button.isBind){
+        Button.isBind = true;
+        Button.confirm_btn.addEventListener('click', fn, false);
+      }
     },
 
     // 取消提交
     cancle: function() {
-      var cancle = doc.querySelector('.cancle');
       var fn = function() {
         Button.clearData();
         NB.Modal.hide();
-        cancle.removeEventListener('click', fn, false);
+        Button.cancle_btn.removeEventListener('click', fn, false);
       };
 
-      cancle.addEventListener('click', fn, false);
+      Button.cancle_btn.addEventListener('click', fn, false);
     }
   };
 
@@ -338,7 +362,13 @@
 
       // 新建文章
       newPost: function() {
-        myEditor.newPost.bind(myEditor);
+        myEditor.newPost();
+        tools.addClass(NB.ToolBar.menus.new, 'hide');
+        NB.ToolBar.menus.publish.parentNode.setAttribute('href', '#action=publish');
+        NB.ToolBar.menus.publish.setAttribute('data-id', '');
+        NB.ToolBar.menus.publish.children[0].innerText =  '发布文章';
+        NB.ToolBar.menus.publish.className = 'fa fa-paper-plane tab-btn';
+        NB.ToolBar.menus.publish.id = 'publish-post';
       },
 
       // 显示提示信息
@@ -390,19 +420,54 @@
 
         wrapper_header.innerHTML = '<i class="fa fa-paper-plane"></i> 发布文章';
         this.displayModal(0);
+
         Button.confirm(function() {
-          console.log('hehe');
           myEditor.publishPost(function(request) {
             var res = JSON.parse(request.responseText);
             NB.Modal.hide();
             NB.ToolBar.displayStatusMsg(res.status, res.detail);
+
+            if(res.status === 'success') {
+              NB.ToolBar.menus.publish.parentNode.setAttribute('href', '#action=update');
+              NB.ToolBar.menus.publish.setAttribute('data-id', res.postId);
+              NB.ToolBar.menus.publish.children[0].innerText =  '更新文章';
+              NB.ToolBar.menus.publish.id = 'update-post';
+              NB.ToolBar.menus.publish.className = 'fa fa-refresh tab-btn';
+            }
           });
         });
         Button.cancle();
       },
 
-      // 保存为草稿
-      saveDraft: function() {
+      // // 保存为草稿
+      // saveDraft: function() {
+      //   var wrapper_header = doc.querySelector('.wrapper-header');
+      //   var title = doc.querySelector('.preview-content h1');
+      //   var post_title = doc.querySelector('#post-title');
+      //
+      //   if(title) {
+      //     post_title.value = title.innerText;
+      //   }
+      //
+      //   wrapper_header.innerHTML = '<i class="fa fa-coffee"></i> 保存为草稿';
+      //   this.displayModal(0);
+      //   Button.confirm(function() {
+      //     myEditor.saveDraft(function(request) {
+      //       var res = JSON.parse(request.responseText);
+      //       NB.Modal.hide();
+      //       NB.ToolBar.displayStatusMsg(res.status, res.detail);
+      //     });
+      //   });
+      //   Button.cancle();
+      // },
+
+      // 更新文章
+      updatePost: function() {
+        // var wrapper_header = doc.querySelector('.wrapper-header');
+        // var isDraft = doc.querySelector('#is-draft');
+        //
+        // this.displayModal(0);
+
         var wrapper_header = doc.querySelector('.wrapper-header');
         var title = doc.querySelector('.preview-content h1');
         var post_title = doc.querySelector('#post-title');
@@ -411,10 +476,12 @@
           post_title.value = title.innerText;
         }
 
-        wrapper_header.innerHTML = '<i class="fa fa-coffee"></i> 保存为草稿';
+        wrapper_header.innerHTML = '<i class="fa fa-refresh"></i> 更新文章';
+
         this.displayModal(0);
+
         Button.confirm(function() {
-          myEditor.saveDraft(function(request) {
+          myEditor.updatePost(function(request) {
             var res = JSON.parse(request.responseText);
             NB.Modal.hide();
             NB.ToolBar.displayStatusMsg(res.status, res.detail);
@@ -423,17 +490,10 @@
         Button.cancle();
       },
 
-      // 更新文章
-      updatePost: function() {
-        var wrapper_header = doc.querySelector('.wrapper-header');
-
-        wrapper_header.innerHTML = '<i class="fa fa-refresh"></i> 更新文章';
-        this.displayModal(0);
-
-      },
-
       // 预览文章 (主要针对小屏幕)
-      previewPost: function() {},
+      previewPost: function() {
+        tools.toggleClass(NB.Contents.edite, 'full-content');
+      },
 
       // 插入表情
       insertExpression: function() {
@@ -546,28 +606,36 @@
 
       // 显示侧栏
       show: function() {
-        tools.addClass(SideBar.besides, 'pushable');
+        tools.addClass(NB.SideBar.besides, 'pushable');
       },
 
       // 隐藏侧栏
       hide: function() {
-        tools.removeClass(SideBar.besides, 'pushable');
+        tools.removeClass(NB.SideBar.besides, 'pushable');
       },
 
       // 移除节点 (文章列表)
       removeNode: function(e) {
         var childNode = e.target.parentNode;
         var parentNode = e.target.parentNode.parentNode;
+
+        console.log(childNode.getAttribute('data-id'));
+        
         parentNode.removeChild(childNode);
+        myEditor.deletePost(childNode.getAttribute('data-id'), function(request) {
+          var res = JSON.parse(request.responseText);
+          NB.ToolBar.displayStatusMsg(res.status, res.detail);
+        });
       },
 
       // 添加节点 (文章列表)
       addNode: function(value) {
         var posts = doc.querySelector('.tab-pages');
-        var str = value;
+        var str = value.title;
         var p = doc.createElement('p');
 
-        p.innerHTML = str;
+        p.innerHTML = str + '<i class="fa fa-trash-o remove" title="移至回收站"></i>';
+        p.setAttribute('data-id', value._id);
         posts.appendChild(p);
       },
 
@@ -576,18 +644,25 @@
         var posts = doc.querySelector('.tab-pages');
 
         doc.addEventListener('click', function(e) {
-          if(e.target.className === 'sidebar-slider' || e.target.className === 'fa fa-book') {
-            SideBar.show();
+          if(e.target.classNameditor === 'sidebar-slider' || e.target.className === 'fa fa-book') {
+            NB.SideBar.show();
+            myEditor.getPosts(2, function(request) {
+              var res = JSON.parse(request.responseText);
+
+              for(var i = 0, len = res.detail.length; i < len; i++) {
+                NB.SideBar.addNode(res.detail[i]);
+              }
+            });
           } else{
-            SideBar.hide();
+            NB.SideBar.hide();
           }
         }, false);
 
-        SideBar.content.addEventListener('click', function(e) {
+        NB.SideBar.content.addEventListener('click', function(e) {
           e.stopPropagation();
           if(e.target.tagName === 'I' && /remove/.test(e.target.className )) {
             if(confirm('确认删除该文章？\n\n警告，骚年三思而后行！\n\n！！！！！！该操作不可逆！！！！！！！\n')) {
-              SideBar.removeNode(e);
+              NB.SideBar.removeNode(e);
             }
           }
         }, false);
@@ -612,7 +687,7 @@
     },
 
     setUp: function() {
-      // this.SideBar.init();
+      this.SideBar.init();
       this.ToolBar.init();
     },
 

@@ -133,59 +133,64 @@ exports.toPublish = function(req, res) {
       isDraft: req.body.isDraft
     };
 
-    post.create(article, function(err, thisArticle) {
-      return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '发布成功', articleId: thisArticle._id});
+    post.create(article, function(err, thisPost) {
+      return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '发布成功', postId: thisPost._id});
     });
   }
 };
 
-exports.toEdite = function(req, res) {
-  post.getArticle(req.body.id, function(err, currArticle) {
-    return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '获取成功',post: currArticle});
-  });
-};
-
 exports.toDelete = function(req, res) {
+  if(!req.session.user) return res.json({result: 'fail', detail: '登录超时请重新登录'});
 
+  deleteArticle();
+
+  console.log(req.body);
+
+  function deleteArticle() {
+    post.remove({_id: req.body.id}, function(err) {
+      return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: '删除成功'});
+    });
+  }
 };
 
-exports.toSaveDraft = function(req, res) {
-  if(!req.session.user) {
-    res.json({status: 'fail', detail: '登录超时请重新登录'});
+exports.toUpdate = function(req, res) {
+  if(!req.session.user) return res.json({result: 'fail', detail: '登录超时请重新登录'});
+
+  if(req.body.title === '' || req.body.tags === '' || req.body.content === '') {
+    res.json({status: 'fail', detail: '数据不能为空'});
   } else {
-    if(req.body.title === '' || req.body.tags === '' || req.body.content === '') {
-      res.json({status: 'fail', detail: '数据不能为空'});
-    } else {
-      console.log(req.body);
-      createArticle();
-    }
+    updateArticle();
   }
 
-  function createArticle() {
+  function updateArticle() {
     var date = new Date();
+    var query = {
+      _id: req.body.id
+    };
     var article = {
-      title: req.body.title,
-      date: {
-        publish: date,
-        update: date
-      },
-      content: {
-        html: marked(req.body.content, { renderer: renderer }),
-        markdown: req.body.content,
-        summary: completeHTML(marked(req.body.content).substring(0, 240))
-      },
-      tags: req.body.tags,
-      category: req.body.category,
-      isDraft: req.body.isDraft
+      $set: {
+        title: req.body.title,
+        'date.update': date,
+        content: {
+          html: marked(req.body.content, { renderer: renderer }),
+          markdown: req.body.content,
+          summary: completeHTML(marked(req.body.content).substring(0, 240))
+        },
+        tags: req.body.tags,
+        category: req.body.category,
+        isDraft: req.body.isDraft
+      }
     };
 
-    post.create(article, function(err, thisArticle) {
-      return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '成功存为草稿', articleId: thisArticle._id});
+    post.update(query, article, function(err) {
+      return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: '更新成功'});
     });
   }
 };
 
 exports.getPosts = function(req, res) {
   console.log('请求的数据',req.body);
-  return res.json({status: 'success', detail: 'none'});
+  post.getAll(function(err, posts) {
+    return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: posts});
+  });
 };

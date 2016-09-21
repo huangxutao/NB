@@ -22,7 +22,7 @@ var PostSchema = new mongoose.Schema({
 PostSchema.static('getAll', function(cb) {
   return this.find(
     {},
-    {'_id': 1,'title': 1, 'date': 1},
+    {'_id': 1,'title': 1},
     {sort: {'_id': -1}},
   cb);
 });
