@@ -47,10 +47,10 @@ PostSchema.static('getPreArticle', function(id, cb) {
   cb);
 });
 
-PostSchema.static('getArticle', function(id, cb) {
+PostSchema.static('getOne', function(id, cb) {
   return this.findOne(
     {'_id': id},
-    {'content.summary': 0},
+    {'content.summary': 0, 'content.html': 0},
   cb);
 });
 
@@ -65,6 +65,22 @@ PostSchema.static('getNextArticle', function(id, cb) {
 PostSchema.static('getTag', function(tag, cb) {
   return this.find(
     {'tags': {$regex: tag}},
+    {'_id': 1,'title': 1, 'date': 1},
+    {sort: {'_id': -1}},
+  cb);
+});
+
+PostSchema.static('getPublished', function(cb) {
+  return this.find(
+    {'isDraft': false},
+    {'_id': 1,'title': 1, 'date': 1},
+    {sort: {'_id': -1}},
+  cb);
+});
+
+PostSchema.static('getDraft', function(cb) {
+  return this.find(
+    {'isDraft': true},
     {'_id': 1,'title': 1, 'date': 1},
     {sort: {'_id': -1}},
   cb);

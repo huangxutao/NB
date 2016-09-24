@@ -90,17 +90,32 @@
   };
 
   /***
+   * 获取服务器的一篇文章
+   * @param { Function } 获取成功后的回调
+   */
+  Editor.prototype.getPost = function(id, cb) {
+    this.connectServer({
+      type: 'POST',
+      url: this.url.get_post,
+      data: {
+        id: id
+      },
+      success: cb
+    });
+  };
+
+  /***
    * 批量获取服务器的文章
    * @param  { Number } num 数量
    * @param { Function } 获取成功后的回调
    */
-  Editor.prototype.getPosts = function(num, cb) {
-    this.num = num || 1;
+  Editor.prototype.getPosts = function(archive, cb) {
+    this.archive = archive || 'all';
     this.connectServer({
       type: 'POST',
       url: this.url.get_posts,
       data: {
-        num: num
+        archive: archive
       },
       success: cb
     });
@@ -140,20 +155,8 @@
    * 发布文章
    * @param { Function } 发布成功后的回调
    */
-  Editor.prototype.publishPost = function(cb) {
+  Editor.prototype.publishPost = function(post, cb) {
     var editor = this;
-    var post_title = doc.querySelector('#post-title');
-    var post_tag = doc.querySelector('#post-tag');
-    var post_category = doc.querySelector('#post-category');
-    var is_draft = doc.querySelector('#is-draft');
-
-    var post = {
-      title: post_title.value,
-      content: editor.getValue(),
-      tags: post_tag.value,
-      category: post_category.value,
-      isDraft: is_draft.checked
-    };
 
     this.connectServer({
       type: 'POST',
@@ -164,52 +167,12 @@
 
   };
 
-  // /**
-  //  * 保存为草稿
-  //  * @param { Function } 保存成功后的回调
-  //  */
-  // Editor.prototype.saveDraft = function(cb) {
-  //   var editor = this;
-  //   var post_title = doc.querySelector('#post-title');
-  //   var post_tag = doc.querySelector('#post-tag');
-  //   var post_category = doc.querySelector('#post-category');
-  //
-  //   var post = {
-  //     title: post_title.value,
-  //     content: editor.getValue(),
-  //     tags: post_tag.value,
-  //     category: post_category.value,
-  //     isDraft: true
-  //   };
-  //
-  //   this.connectServer({
-  //     type: 'POST',
-  //     url: editor.url.draft,
-  //     data: post,
-  //     success: cb
-  //   });
-  // };
-
   /**
    * 更新文章
    * @param { Function } 更新成功后的回调
    */
-  Editor.prototype.updatePost = function(cb) {
+  Editor.prototype.updatePost = function(post, cb) {
     var editor = this;
-    var post_id = doc.querySelector('#update-post').getAttribute('data-id');
-    var post_title = doc.querySelector('#post-title');
-    var post_tag = doc.querySelector('#post-tag');
-    var post_category = doc.querySelector('#post-category');
-    var is_draft = doc.querySelector('#is-draft');
-
-    var post = {
-      id: post_id,
-      title: post_title.value,
-      content: editor.getValue(),
-      tags: post_tag.value,
-      category: post_category.value,
-      isDraft: is_draft.checked
-    };
 
     this.connectServer({
       type: 'POST',
@@ -257,6 +220,7 @@
       update: '/to-update',
       delete: '/to-delete',
       draft: '/to-save-draft',
+      get_post: '/get-post',
       get_posts: '/get-posts'
     }
   });
@@ -308,11 +272,25 @@
   };
 
 
-
   /*****************************************************
    * NB 后台管理
    *****************************************************/
   var NB = {
+    currentPost: {},
+
+    expressions: doc.querySelector('.expressions'),
+    setting: doc.querySelector('.setting'),
+
+    posts: doc.querySelector('.tab-pages'),
+    published: doc.querySelectorAll('.tab-page')[0],
+    draft: doc.querySelectorAll('.tab-page')[1],
+
+    userInput: {
+      title: doc.querySelector('#post-title'),
+      tags: doc.querySelector('#post-tag'),
+      category: doc.querySelector('#post-category'),
+      isDraft: doc.querySelector('#is-draft'),
+    },
 
     /***
      * 内容区
@@ -320,6 +298,152 @@
     Contents: {
       edite: doc.querySelector('.markdown-content'),
       preview: doc.querySelector('.preview-content')
+    },
+
+    /***
+     * 侧栏
+     */
+    SideBar: {
+      slider: doc.querySelector('.sidebar-slider'),
+      content: doc.querySelector('.sidebar'),
+      besides: doc.querySelector('.contents'),
+
+      // 显示侧栏
+      show: function() {
+        tools.addClass(NB.SideBar.besides, 'pushable');
+      },
+
+      // 隐藏侧栏
+      hide: function() {
+        tools.removeClass(NB.SideBar.besides, 'pushable');
+      },
+
+      // 移除节点 (文章列表)
+      removeNode: function(e) {
+        var childNode = e.target.parentNode;
+        var parentNode = e.target.parentNode.parentNode;
+
+        parentNode.removeChild(childNode);
+        myEditor.deletePost(childNode.getAttribute('data-id'), function(request) {
+          var res = JSON.parse(request.responseText);
+          NB.ToolBar.displayStatusMsg(res.status, res.detail);
+        });
+      },
+
+      // 添加节点 (文章列表)
+      addNode: function(value, content, insertBefore) {
+        var p = doc.createElement('p');
+        var date;
+
+        if(value.date) {
+          date = value.date.publish;
+        } else {
+          date = new Date();
+        }
+
+        p.innerHTML = value.title + '<span class="post-date">' + date.toString().slice(0,-15) + '</span><i class="fa fa-trash-o remove" title="删除文章"></i>';
+        p.setAttribute('data-id', value._id);
+
+        if(insertBefore) {
+          var current = doc.querySelector('.current-post');
+
+          if(current) current.className = '';
+          p.className = 'current-post';
+          content.insertBefore(p, content.children[0]);
+        } else {
+           content.appendChild(p);
+        }
+      },
+
+      // 初始化
+      init: function() {
+        myEditor.getPosts('published', function(request) {
+          var res = JSON.parse(request.responseText);
+
+          for(var i = 0, len = res.detail.length; i < len; i++) {
+            NB.SideBar.addNode(res.detail[i], NB.published);
+          }
+        });
+
+        doc.addEventListener('click', function(e) {
+          if(e.target.classNameditor === 'sidebar-slider' || e.target.className === 'fa fa-book') {
+            NB.SideBar.show();
+          } else{
+            NB.SideBar.hide();
+          }
+        }, false);
+
+        NB.SideBar.content.addEventListener('click', function(e) {
+          e.stopPropagation();
+
+          var p = doc.querySelectorAll('.tab-pages p');
+          var tab_btns = doc.querySelectorAll('.tab-btns .tab-btn');
+          var tab_pages = doc.querySelectorAll('.tab-pages .tab-page');
+
+          if(e.target.tagName === 'I' && /remove/.test(e.target.className )) {
+            if(confirm('确认删除该文章？\n\n警告，骚年三思而后行！\n\n！！！！！！该操作不可逆！！！！！！！\n')) {
+              NB.SideBar.removeNode(e);
+            }
+          }
+
+          if(tools.hasClass(e.target, 'tab-btn')) {
+            for(var i = 0, len = tab_btns.length; i < len; i++) {
+              tab_btns[i].index = i;
+              tools.removeClass(tab_btns[i], 'current');
+              tools.addClass(tab_pages[i], 'hide');
+            }
+            tools.addClass(e.target, 'current');
+            tools.removeClass(tab_pages[e.target.index], 'hide');
+          }
+
+          if(e.target.tagName === 'P') {
+            for (var j = 0, l = p.length; j < l; j++) {
+              p[j].className = '';
+            }
+
+            e.target.className = 'current-post';
+
+            myEditor.getPost(e.target.getAttribute('data-id'), function(request) {
+              var res = JSON.parse(request.responseText);
+
+              if(res.status === 'success') {
+                NB.currentPost = {
+                  id: res.post._id,
+                  title: res.post.title,
+                  tags: res.post.tags,
+                  category: res.post.category,
+                  content: res.post.content.markdown,
+                  isDraft: res.post.isDraft
+                };
+
+                NB.ToolBar.menus.publish.children[0].innerText =  '更新文章';
+                NB.ToolBar.menus.publish.className = 'fa fa-refresh tab-btn';
+                NB.ToolBar.menus.publish.id = 'update-post';
+                myEditor.setValue(res.post.content.markdown);
+
+                console.log('刚刚选择:', NB.currentPost);
+              }
+            });
+          }
+        }, false);
+
+        // // 获取文章列表
+        // posts.addEventListener('scroll', function() {
+        //   var scrollTop = posts.scrollTop;
+        //   var scrollHeight = posts.scrollHeight;
+        //   var clientHeight = posts.clientHeight;
+        //   var page = this.children.length;
+        //
+        //   scrollTop = posts.scrollTop;
+        //   scrollHeight = posts.scrollHeight;
+        //   clientHeight = posts.clientHeight;
+        //
+        //   if(scrollTop === (scrollHeight - clientHeight)) {
+        //     console.log(0);
+        //   }
+        //
+        // }, false);
+      }
     },
 
     /***
@@ -336,6 +460,7 @@
         expression: doc.querySelector('#insert-expression'),
         setting: doc.querySelector('#setting')
       },
+
 
       displayMenu: function() {
 
@@ -358,17 +483,6 @@
           }
         }, false);
 
-      },
-
-      // 新建文章
-      newPost: function() {
-        myEditor.newPost();
-        tools.addClass(NB.ToolBar.menus.new, 'hide');
-        NB.ToolBar.menus.publish.parentNode.setAttribute('href', '#action=publish');
-        NB.ToolBar.menus.publish.setAttribute('data-id', '');
-        NB.ToolBar.menus.publish.children[0].innerText =  '发布文章';
-        NB.ToolBar.menus.publish.className = 'fa fa-paper-plane tab-btn';
-        NB.ToolBar.menus.publish.id = 'publish-post';
       },
 
       // 显示提示信息
@@ -408,83 +522,100 @@
         tools.toggleClass(items[num], 'hide');
       },
 
+      // 新建文章
+      newPost: function() {
+        doc.title = '后台管理/新建文章';
+        win.location.hash = '#action=new';
+
+        NB.currentPost = {};
+
+        myEditor.newPost();
+        tools.addClass(NB.ToolBar.menus.new, 'hide');
+        NB.ToolBar.menus.publish.children[0].innerText =  '发布文章';
+        NB.ToolBar.menus.publish.className = 'fa fa-paper-plane tab-btn';
+        NB.ToolBar.menus.publish.id = 'publish-post';
+
+        console.log('刚刚新建:', NB.currentPost);
+      },
+
       // 发布文章
       publishPost: function() {
         var wrapper_header = doc.querySelector('.wrapper-header');
-        var title = doc.querySelector('.preview-content h1');
-        var post_title = doc.querySelector('#post-title');
+        var post_title = doc.querySelector('.preview-content h1');
 
-        if(title) {
-          post_title.value = title.innerText;
+        doc.title = '后台管理/发布文章';
+        win.location.hash = '#action=publish';
+
+        if(post_title) {
+          NB.userInput.title.value = post_title.innerText;
         }
 
         wrapper_header.innerHTML = '<i class="fa fa-paper-plane"></i> 发布文章';
+
         this.displayModal(0);
 
         Button.confirm(function() {
-          myEditor.publishPost(function(request) {
+          NB.currentPost = {
+            title: NB.userInput.title.value,
+            tags: NB.userInput.tags.value,
+            category: NB.userInput.category.value,
+            content: myEditor.getValue(),
+            isDraft: NB.userInput.isDraft.checked
+          };
+          myEditor.publishPost(NB.currentPost, function(request) {
             var res = JSON.parse(request.responseText);
+
             NB.Modal.hide();
             NB.ToolBar.displayStatusMsg(res.status, res.detail);
 
             if(res.status === 'success') {
-              NB.ToolBar.menus.publish.parentNode.setAttribute('href', '#action=update');
-              NB.ToolBar.menus.publish.setAttribute('data-id', res.postId);
+              NB.currentPost.id = res.post._id;
               NB.ToolBar.menus.publish.children[0].innerText =  '更新文章';
               NB.ToolBar.menus.publish.id = 'update-post';
               NB.ToolBar.menus.publish.className = 'fa fa-refresh tab-btn';
+              NB.SideBar.addNode(res.post, NB.published, true);
+
+              console.log('刚刚发布:', NB.currentPost);
             }
           });
         });
         Button.cancle();
       },
 
-      // // 保存为草稿
-      // saveDraft: function() {
-      //   var wrapper_header = doc.querySelector('.wrapper-header');
-      //   var title = doc.querySelector('.preview-content h1');
-      //   var post_title = doc.querySelector('#post-title');
-      //
-      //   if(title) {
-      //     post_title.value = title.innerText;
-      //   }
-      //
-      //   wrapper_header.innerHTML = '<i class="fa fa-coffee"></i> 保存为草稿';
-      //   this.displayModal(0);
-      //   Button.confirm(function() {
-      //     myEditor.saveDraft(function(request) {
-      //       var res = JSON.parse(request.responseText);
-      //       NB.Modal.hide();
-      //       NB.ToolBar.displayStatusMsg(res.status, res.detail);
-      //     });
-      //   });
-      //   Button.cancle();
-      // },
-
       // 更新文章
       updatePost: function() {
-        // var wrapper_header = doc.querySelector('.wrapper-header');
-        // var isDraft = doc.querySelector('#is-draft');
-        //
-        // this.displayModal(0);
-
         var wrapper_header = doc.querySelector('.wrapper-header');
-        var title = doc.querySelector('.preview-content h1');
-        var post_title = doc.querySelector('#post-title');
 
-        if(title) {
-          post_title.value = title.innerText;
-        }
+        doc.title = '后台管理/更新文章';
+        win.location.hash = '#action=update';
+
+        NB.userInput.title.value = NB.currentPost.title;
+        NB.userInput.tags.value = NB.currentPost.tags;
+        NB.userInput.category.value = NB.currentPost.category;
+        NB.userInput.isDraft.checked = NB.currentPost.isDraft;
+
 
         wrapper_header.innerHTML = '<i class="fa fa-refresh"></i> 更新文章';
 
         this.displayModal(0);
 
         Button.confirm(function() {
-          myEditor.updatePost(function(request) {
+          NB.currentPost = {
+            id: NB.currentPost.id ,
+            title: NB.userInput.title.value,
+            tags: NB.userInput.tags.value,
+            category: NB.userInput.category.value,
+            content: myEditor.getValue(),
+            isDraft: NB.userInput.isDraft.checked
+          };
+
+          myEditor.updatePost(NB.currentPost, function(request) {
             var res = JSON.parse(request.responseText);
+
             NB.Modal.hide();
             NB.ToolBar.displayStatusMsg(res.status, res.detail);
+
+            console.log('刚刚更新:', NB.currentPost);
           });
         });
         Button.cancle();
@@ -497,11 +628,23 @@
 
       // 插入表情
       insertExpression: function() {
+        var fn = function(e) {
+          if(e.target.className === 'emojis') {
+            myEditor.setValue(myEditor.getValue() + e.target.innerText);
+            NB.Modal.hide();
+            NB.expressions.removeEventListener('click', fn, false);
+          }
+        };
+
         this.displayModal(1);
+        NB.expressions.addEventListener('click', fn, false);
       },
 
       // 设置
       doSetting: function() {
+        doc.title = '后台管理/Setting';
+        win.location.hash = '#action=setting';
+
         this.displayModal(2);
       },
 
@@ -593,96 +736,6 @@
 
         unbindHandler();
         bindHandler();
-      }
-    },
-
-    /***
-     * 侧栏
-     */
-    SideBar: {
-      slider: doc.querySelector('.sidebar-slider'),
-      content: doc.querySelector('.sidebar'),
-      besides: doc.querySelector('.contents'),
-
-      // 显示侧栏
-      show: function() {
-        tools.addClass(NB.SideBar.besides, 'pushable');
-      },
-
-      // 隐藏侧栏
-      hide: function() {
-        tools.removeClass(NB.SideBar.besides, 'pushable');
-      },
-
-      // 移除节点 (文章列表)
-      removeNode: function(e) {
-        var childNode = e.target.parentNode;
-        var parentNode = e.target.parentNode.parentNode;
-
-        console.log(childNode.getAttribute('data-id'));
-        
-        parentNode.removeChild(childNode);
-        myEditor.deletePost(childNode.getAttribute('data-id'), function(request) {
-          var res = JSON.parse(request.responseText);
-          NB.ToolBar.displayStatusMsg(res.status, res.detail);
-        });
-      },
-
-      // 添加节点 (文章列表)
-      addNode: function(value) {
-        var posts = doc.querySelector('.tab-pages');
-        var str = value.title;
-        var p = doc.createElement('p');
-
-        p.innerHTML = str + '<i class="fa fa-trash-o remove" title="移至回收站"></i>';
-        p.setAttribute('data-id', value._id);
-        posts.appendChild(p);
-      },
-
-      // 初始化
-      init: function() {
-        var posts = doc.querySelector('.tab-pages');
-
-        doc.addEventListener('click', function(e) {
-          if(e.target.classNameditor === 'sidebar-slider' || e.target.className === 'fa fa-book') {
-            NB.SideBar.show();
-            myEditor.getPosts(2, function(request) {
-              var res = JSON.parse(request.responseText);
-
-              for(var i = 0, len = res.detail.length; i < len; i++) {
-                NB.SideBar.addNode(res.detail[i]);
-              }
-            });
-          } else{
-            NB.SideBar.hide();
-          }
-        }, false);
-
-        NB.SideBar.content.addEventListener('click', function(e) {
-          e.stopPropagation();
-          if(e.target.tagName === 'I' && /remove/.test(e.target.className )) {
-            if(confirm('确认删除该文章？\n\n警告，骚年三思而后行！\n\n！！！！！！该操作不可逆！！！！！！！\n')) {
-              NB.SideBar.removeNode(e);
-            }
-          }
-        }, false);
-
-        // 获取文章列表
-        posts.addEventListener('scroll', function() {
-          var scrollTop = posts.scrollTop;
-          var scrollHeight = posts.scrollHeight;
-          var clientHeight = posts.clientHeight;
-          var page = this.children.length;
-
-          scrollTop = posts.scrollTop;
-          scrollHeight = posts.scrollHeight;
-          clientHeight = posts.clientHeight;
-
-          if(scrollTop === (scrollHeight - clientHeight)) {
-            console.log(0);
-          }
-
-        }, false);
       }
     },
 

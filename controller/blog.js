@@ -68,21 +68,8 @@ exports.show = function(req, res) {
 };
 
 exports.manage = function(req, res) {
-  if(!req.session.user) return res.redirect('/do-manage/signin');
-
-  var query = req.query;
-  // function getAllFiles() {
-  //
-  // }
-
-  fs.readdir('./public/backend/emojis', function(err, files) {
-    if(err) return err;
-    // files.forEach(function(file) {
-    //   console.log(file);
-    //   res.render('backend/index', {title: '后台管理', emojis: files});
-    // });
-    res.render('backend/index', {title: '后台管理', emojis: files});
-  });
+  var emojis = ['😁', '😂', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😌', '😍', '😏', '😒', '😓', '😔', '😘', '😜', '😝', '😣', '😫', '😭', '😰', '😨', '😤', '😱', '🙅', '🙌', '🙋', '🙈', '✌', 'ℹ', '⏰', '☀', '☕', '✔', '✖', '❓', '❤'];
+  return req.session.user ? res.render('backend/index', {title: '后台管理', emojis: emojis}) : res.redirect('/do-manage/signin');
 };
 
 exports.Signin = function(req, res) {
@@ -134,7 +121,8 @@ exports.toPublish = function(req, res) {
     };
 
     post.create(article, function(err, thisPost) {
-      return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '发布成功', postId: thisPost._id});
+      console.log('当前发布：', thisPost);
+      return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '发布成功', post: {_id: thisPost._id, title: thisPost.title}});
     });
   }
 };
@@ -188,9 +176,28 @@ exports.toUpdate = function(req, res) {
   }
 };
 
-exports.getPosts = function(req, res) {
-  console.log('请求的数据',req.body);
-  post.getAll(function(err, posts) {
-    return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: posts});
+exports.getPost = function(req, res) {
+  console.log('请求的id',req.body);
+  post.getOne(req.body.id, function(err, post) {
+    return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: '载入成功', post: post});
   });
+};
+
+exports.getPosts = function(req, res) {
+  console.log('请求的文章归类',req.body);
+  if(req.body.archive === 'published') {
+    post.getPublished(function(err, posts) {
+      return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: posts});
+    });
+  }
+
+  if(req.body.archive === 'draft') {
+    post.getDraft(function(err, posts) {
+      return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: posts});
+    });
+  }
+
+  // post.getAll(function(err, posts) {
+  //   return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: posts});
+  // });
 };

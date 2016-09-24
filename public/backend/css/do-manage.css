@@ -124,11 +124,11 @@ button[name="cancle"]:hover{
   border-bottom: .2rem solid #38B7EA;
 }
 
-.sidebar .current-page{
+.sidebar .current-post{
   background: #009688;
 }
 
-.sidebar .current-page:hover{
+.sidebar .current-post:hover{
   background: #009688;
 }
 
@@ -145,6 +145,13 @@ button[name="cancle"]:hover{
   color: #fff;
 }
 
+.sidebar p span{
+  position: absolute;
+  right: 1.2rem;
+  color: #bbb;
+  font-size: 1rem;
+}
+
 .sidebar p:hover{
   cursor: pointer;
   background: #475160;
@@ -154,7 +161,7 @@ button[name="cancle"]:hover{
   position: absolute;
   right: 0;
   display: none;
-  padding: 0 1.6rem;
+  padding: 0 2.4rem;
   font-size: 1.4rem;
   text-align: center;
   text-indent: 0;
@@ -312,7 +319,7 @@ button[name="cancle"]:hover{
 .full-content{
   float: none;
   margin: 0 auto;
-  width: 100%;
+  width: 100%!important;
   height: 100%;
   box-sizing: border-box;
   background: #fff;
@@ -460,28 +467,32 @@ ul.expressions{
   padding: .6rem;
   border: .1rem solid #eee;
   cursor: default;
+  text-align: center;
   transition: all .2s ease;
 }
 
-ul.expressions li{
+.expressions .emojis{
   display: inline-block;
   padding: .2rem;
   list-style: none;
-  line-height: 100%;
   cursor: pointer;
   transition: all .1s ease;
 }
 
-ul.expressions li:hover{
+.expressions .emojis{
+  width: 2.8rem;
+  height: 2.8rem;
+  font-size: 2rem;
+  line-height: 2.8rem;
+  text-align: center;
+  /*color: #ff5722;*/
+}
+
+.expressions .emojis:hover{
   transform: scale(1.4);
 }
 
-ul.expressions li img{
-  width: 2rem;
-  height: 2rem;
-}
-
-ul.expressions li img:active{
+.expressions .emojis:active{
   border-radius: .28rem;
   background: #bbb;
 }
@@ -538,7 +549,7 @@ ul.expressions li img:active{
   text-align: center;
   -webkit-user-select: none;
   cursor: default;
-  z-index: 999;
+  z-index: 1000;
   transition: all .6s ease;
 }
 
@@ -581,9 +592,11 @@ ul.expressions li img:active{
   label{display: block;padding-bottom: .2rem;}
   input{width: 100%;min-width: 100%!important;}
   .modal .modal-content{width: 90%;}
+  .sidebar{width: 86%}
+  .pushable{transform: translateX(86%);}
   .item{padding: 1rem 1.2rem;}
-  .markdown-content{width: 100%;}
-  .preview-content{width: 0;}
+  .markdown-content{width: 0;}
+  .preview-content{width: 100%;}
 }
 
 /* markdown 解析后的样式 --- Start */

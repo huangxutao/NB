@@ -8,13 +8,12 @@
 <div class="contents">
   <div class="sidebar-slider"><i class="fa fa-book"><span class="tooltip">所有文章</span></i></div>
   <div class="toolbar">
-    <a href="#action=new"><i id="new-post" class="fa fa-pencil hide"><span class="tooltip">新建博文</span></i></a>
-    <a href="#action=publish"><i id="publish-post" class="fa fa-paper-plane tab-btn"><span class="tooltip">发布文章</span></i></a>
-    <a href="#action=update"><i id="update-post" class="fa fa-refresh tab-btn hide"><span class="tooltip">更新博文</span></i></a>
-    <!-- <a href="#action=draft"><i id="save-draft" class="fa fa-coffee tab-btn"><span class="tooltip">存为草稿</span></i></a> -->
+    <i id="new-post" class="fa fa-pencil hide"><span class="tooltip">新建博文</span></i>
+    <i id="publish-post" class="fa fa-paper-plane tab-btn"><span class="tooltip">发布文章</span></i>
+    <i id="update-post" class="fa fa-refresh tab-btn hide"><span class="tooltip">更新博文</span></i>
     <i id="preview-post" class="fa fa-desktop hide"><span class="tooltip">预览</span></i>
     <i id="insert-expression" class="fa fa-smile-o tab-btn"><span class="tooltip">插入表情</span></i>
-    <a href="#action=setting"><i id="setting" class="fa fa-cog tab-btn"><span class="tooltip">设置</span></i></a>
+    <i id="setting" class="fa fa-cog tab-btn"><span class="tooltip">设置</span></i>
   </div>
   <!-- markdown 编辑区 -->
   <div class="markdown-content full-content"></div>
@@ -23,10 +22,8 @@
 </div>
 <!-- 侧栏 -->
 <div class="sidebar">
-  <div class="tab-btns"><span class="current">已发布</span><span>草稿</span></div>
-  <div class="tab-pages">
-    <p class="current-page">JavaScript 事件处理 <i class="fa fa-trash-o remove" title="移至回收站"></i></p>
-  </div>
+  <div class="tab-btns"><span class="current tab-btn">已发布</span><span class="tab-btn">草稿</span></div>
+  <div class="tab-pages"><div class="tab-page"></div><div class="tab-page hide"></div></div>
 </div>
 <!-- 弹出层 -->
 <div class="modal">
