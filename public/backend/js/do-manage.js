@@ -10,15 +10,12 @@
     this.preview_area  = configuration.preview_area;
     this.remote_server = configuration.remote_server || '';
     this.url           = configuration.url;
-    this.placeholder   = configuration.placeholder || '';
     this.CodeMirror = CodeMirror(this.editing_area, {
       tabSize: 2,
       autofocus: true,
       styleActiveLine: true,
       lineWrapping: true
     });
-
-    this.setValue(this.placeholder);
 
     if(configuration.auto_marked) {
       var value = '';
@@ -42,7 +39,7 @@
 
 
     win.addEventListener('beforeunload', function(e) {
-      var confirmationMessage = "\o/";
+      var confirmationMessage = "确认离开";
 
       e.returnValue = confirmationMessage;
       return confirmationMessage;
@@ -139,6 +136,14 @@
   };
 
   /**
+   * 获取编辑器中的数据
+   * @param 返回类型为字符串
+   */
+  Editor.prototype.insertValue = function(str) {
+    return this.CodeMirror.replaceSelection(str);
+  };
+
+  /**
    * 清除所有内容
    */
   Editor.prototype.newPost = function() {
@@ -214,7 +219,6 @@
     preview_area : doc.querySelector('.preview-content'),
     auto_marked: true,
     sync_scroll: true,
-    placeholder: '# Welcome To Use NB',
     url: {
       publish: '/to-publish',
       update: '/to-update',
@@ -241,6 +245,7 @@
 
       for(var i = 0, len = input.length; i < len; i++) {
         input[i].value = '';
+        if(input[i].type === 'checkbox') input[i].checked = false;
       }
     },
 
@@ -336,12 +341,12 @@
         var date;
 
         if(value.date) {
-          date = value.date.publish;
+          date = value.date.publish.toString().slice(0,-14);
         } else {
-          date = new Date();
+          date = '刚刚';
         }
 
-        p.innerHTML = value.title + '<span class="post-date">' + date.toString().slice(0,-15) + '</span><i class="fa fa-trash-o remove" title="删除文章"></i>';
+        p.innerHTML = value.title + '<span class="post-date">' + date + '</span><i class="fa fa-trash-o remove" title="删除文章"></i>';
         p.setAttribute('data-id', value._id);
 
         if(insertBefore) {
@@ -365,8 +370,24 @@
           }
         });
 
+        myEditor.getPosts('draft', function(request) {
+          var res = JSON.parse(request.responseText);
+
+          for(var i = 0, len = res.detail.length; i < len; i++) {
+            NB.SideBar.addNode(res.detail[i], NB.draft);
+          }
+
+          if(NB.published.children[0]) {
+            NB.published.children[0].click();
+          } else if(NB.draft.children[0]){
+            NB.draft.children[0].click();
+          } else {
+            myEditor.setValue('# Welcome To Use NB')
+          }
+        });
+
         doc.addEventListener('click', function(e) {
-          if(e.target.classNameditor === 'sidebar-slider' || e.target.className === 'fa fa-book') {
+          if(e.target.className === 'sidebar-slider' || e.target.className === 'fa fa-book') {
             NB.SideBar.show();
           } else{
             NB.SideBar.hide();
@@ -396,7 +417,12 @@
             tools.removeClass(tab_pages[e.target.index], 'hide');
           }
 
-          if(e.target.tagName === 'P') {
+          if(e.target.tagName === 'P' && e.target.className !== 'current-post') {
+
+            if(myEditor.getValue() !== NB.currentPost.content && NB.currentPost.title) {
+              if(confirm('还未保存修改！  请前往保存。。。\n')) return doc.querySelectorAll('.toolbar i')[1].click();
+            }
+
             for (var j = 0, l = p.length; j < l; j++) {
               p[j].className = '';
             }
@@ -420,8 +446,6 @@
                 NB.ToolBar.menus.publish.className = 'fa fa-refresh tab-btn';
                 NB.ToolBar.menus.publish.id = 'update-post';
                 myEditor.setValue(res.post.content.markdown);
-
-                console.log('刚刚选择:', NB.currentPost);
               }
             });
           }
@@ -462,28 +486,14 @@
       },
 
 
-      displayMenu: function() {
+      // displayMenu: function() {
 
-        // 有文字时 显示新建 menu (初始化时)
-        if(myEditor.getValue() !== '') {
-          tools.removeClass(NB.ToolBar.menus.new, 'hide');
-        }
+      //   // 编辑区全屏时 显示预览 menu
+      //   if(tools.hasClass(NB.Contents.edite, 'full-content')) {
+      //     tools.removeClass(NB.ToolBar.menus.preview, 'hide');
+      //   }
 
-        // 编辑区全屏时 显示预览 menu
-        if(tools.hasClass(NB.Contents.edite, 'full-content')) {
-          tools.removeClass(NB.ToolBar.menus.preview, 'hide');
-        }
-
-        // 有文字时 显示新建 menu (实时)
-        NB.Contents.edite.addEventListener('keyup', function() {
-          if(myEditor.getValue() !== '') {
-            tools.removeClass(NB.ToolBar.menus.new, 'hide');
-          } else {
-            tools.addClass(NB.ToolBar.menus.new, 'hide');
-          }
-        }, false);
-
-      },
+      // },
 
       // 显示提示信息
       displayStatusMsg: function(type, msg) {
@@ -534,8 +544,6 @@
         NB.ToolBar.menus.publish.children[0].innerText =  '发布文章';
         NB.ToolBar.menus.publish.className = 'fa fa-paper-plane tab-btn';
         NB.ToolBar.menus.publish.id = 'publish-post';
-
-        console.log('刚刚新建:', NB.currentPost);
       },
 
       // 发布文章
@@ -573,9 +581,7 @@
               NB.ToolBar.menus.publish.children[0].innerText =  '更新文章';
               NB.ToolBar.menus.publish.id = 'update-post';
               NB.ToolBar.menus.publish.className = 'fa fa-refresh tab-btn';
-              NB.SideBar.addNode(res.post, NB.published, true);
-
-              console.log('刚刚发布:', NB.currentPost);
+              NB.currentPost.isDraft ? NB.SideBar.addNode(res.post, NB.draft, true) : NB.SideBar.addNode(res.post, NB.published, true);
             }
           });
         });
@@ -614,8 +620,6 @@
 
             NB.Modal.hide();
             NB.ToolBar.displayStatusMsg(res.status, res.detail);
-
-            console.log('刚刚更新:', NB.currentPost);
           });
         });
         Button.cancle();
@@ -628,16 +632,29 @@
 
       // 插入表情
       insertExpression: function() {
+
         var fn = function(e) {
           if(e.target.className === 'emojis') {
-            myEditor.setValue(myEditor.getValue() + e.target.innerText);
+            myEditor.insertValue(e.target.innerText);
             NB.Modal.hide();
-            NB.expressions.removeEventListener('click', fn, false);
           }
+          unBindHandler();
         };
 
+        function bindHandler() {
+          NB.expressions.addEventListener('click', fn, false);
+        }
+
+        function unBindHandler() {
+          NB.expressions.removeEventListener('click', fn, false);
+        }
+
         this.displayModal(1);
-        NB.expressions.addEventListener('click', fn, false);
+        unBindHandler();
+        bindHandler();
+
+
+        // NB.expressions.addEventListener('click', fn, false);
       },
 
       // 设置
@@ -650,7 +667,7 @@
 
       // 初始化
       init: function() {
-        this.displayMenu();
+        // this.displayMenu();
 
         var fn = function(e) {
           var self = this;
@@ -740,8 +757,15 @@
     },
 
     setUp: function() {
+      var loader = doc.querySelector('.loader');
+
       this.SideBar.init();
       this.ToolBar.init();
+
+      setTimeout(function() {
+        document.body.removeChild(loader);
+      }, 1600);
+
     },
 
   };

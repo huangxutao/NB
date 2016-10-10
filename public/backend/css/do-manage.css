@@ -34,6 +34,39 @@ html,body{
   overflow: hidden;
 }
 
+.loader{
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background:#fff;
+  z-index: 999;
+  animation: fadeOutLoader ease 3s forwards;
+}
+
+.loader p{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 4rem;
+  background: #546072;
+  color: #fff;
+  font-size: 4rem;
+  line-height: 8rem;
+  text-align: center;
+}
+
+@keyframes fadeOutLoader{
+  from{opacity: 1;}
+  to{opacity: 0;}
+}
+
 .pushable{
   position: relative;
   overflow: hidden;
@@ -66,6 +99,13 @@ input{
 input:focus, button:focus{
   border-color: #35bdb2;
   outline-color: #35bdb2;
+}
+
+input[type="checkbox"]{
+  min-width: auto;
+  width: 1.8rem;
+  height: 1.8rem;
+  vertical-align: middle;
 }
 
 button{
@@ -150,6 +190,7 @@ button[name="cancle"]:hover{
   right: 1.2rem;
   color: #bbb;
   font-size: 1rem;
+  text-indent: 0;
 }
 
 .sidebar p:hover{
@@ -161,7 +202,7 @@ button[name="cancle"]:hover{
   position: absolute;
   right: 0;
   display: none;
-  padding: 0 2.4rem;
+  padding: 0 2.8rem;
   font-size: 1.4rem;
   text-align: center;
   text-indent: 0;
@@ -170,6 +211,10 @@ button[name="cancle"]:hover{
 
 .sidebar p:hover i{
   display: inline-block;
+}
+
+.sidebar p:hover .post-date{
+  opacity: 0;
 }
 
 .sidebar p i:hover{
@@ -313,7 +358,6 @@ button[name="cancle"]:hover{
   line-height: 1.8rem;
   box-sizing: border-box;
   overflow: auto;
-  transition: all .6s ease;
 }
 
 .full-content{
@@ -339,17 +383,6 @@ button[name="cancle"]:hover{
   padding: 0;
   background: #fafafa;
 }
-/*.full-markdown-content{
-  float: none;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 66rem;
-  height: 100%;
-  box-sizing: border-box;
-  background: #fff;
-  overflow: auto;
-  -webkit-user-modify: read-write-plaintext-only;
-}*/
 
 .markdown-content:focus{outline-color: transparent;}
 
@@ -547,7 +580,11 @@ ul.expressions{
   right: 0;
   left: 0;
   text-align: center;
+  user-select: none;
   -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
   cursor: default;
   z-index: 1000;
   transition: all .6s ease;

@@ -4,16 +4,19 @@
   <link rel="stylesheet" href="../backend/css/codemirror.css">
 {{/extend}}
 <!-- 提示信息 -->
+<div class="loader">
+  <p>NB</p>
+</div>
 <div class="status-msg hide-status-msg hide"><span></span></div>
 <div class="contents">
   <div class="sidebar-slider"><i class="fa fa-book"><span class="tooltip">所有文章</span></i></div>
   <div class="toolbar">
-    <i id="new-post" class="fa fa-pencil hide"><span class="tooltip">新建博文</span></i>
+    <i id="new-post" class="fa fa-pencil"><span class="tooltip">新建博文</span></i>
     <i id="publish-post" class="fa fa-paper-plane tab-btn"><span class="tooltip">发布文章</span></i>
     <i id="update-post" class="fa fa-refresh tab-btn hide"><span class="tooltip">更新博文</span></i>
-    <i id="preview-post" class="fa fa-desktop hide"><span class="tooltip">预览</span></i>
+    <i id="preview-post" class="fa fa-desktop"><span class="tooltip">预览</span></i>
     <i id="insert-expression" class="fa fa-smile-o tab-btn"><span class="tooltip">插入表情</span></i>
-    <i id="setting" class="fa fa-cog tab-btn"><span class="tooltip">设置</span></i>
+    <!--<i id="setting" class="fa fa-cog tab-btn"><span class="tooltip">设置</span></i>-->
   </div>
   <!-- markdown 编辑区 -->
   <div class="markdown-content full-content"></div>
@@ -40,9 +43,5 @@
   </div>
 </div>
 {{#extend "scripts"}}
-  <script src="../backend/js/codemirror.js"></script>
-  <script src="../backend/js/markdown.js"></script>
-  <script src="../backend/js/marked.min.js"></script>
-  <script src="../backend/js/tools.js"></script>
-  <script src="../backend/js/do-manage.js"></script>
+  <script src="../backend/js/all.min.js"></script>
 {{/extend}}
