@@ -147,13 +147,8 @@
    * 清除所有内容
    */
   Editor.prototype.newPost = function() {
-    if(this.getValue() !== '') {
-      var isConfirm = confirm('未保存的文章\n\n确认清空当前内容\n');
-      if(isConfirm) {
-        this.setValue('');
-        this.preview_area.innerHTML = '';
-      }
-    }
+    this.setValue('');
+    this.preview_area.innerHTML = '';
   };
 
   /**
@@ -420,8 +415,11 @@
           if(e.target.tagName === 'P' && e.target.className !== 'current-post') {
 
             if(myEditor.getValue() !== NB.currentPost.content && NB.currentPost.title) {
-              if(confirm('还未保存修改！  请前往保存。。。\n')) return doc.querySelectorAll('.toolbar i')[1].click();
+              if(confirm('还未保存修改！  请前往保存。。。\n')) return NB.ToolBar.menus.update.click();
+            } else if(myEditor.getValue() !== '' && win.location.hash === '#action=new') {
+              if(confirm('当前新建文章还未保存！  请前往保存。。。\n')) return NB.ToolBar.menus.publish.click();
             }
+
 
             for (var j = 0, l = p.length; j < l; j++) {
               p[j].className = '';
@@ -442,13 +440,15 @@
                   isDraft: res.post.isDraft
                 };
 
-                NB.ToolBar.menus.publish.children[0].innerText =  '更新文章';
-                NB.ToolBar.menus.publish.className = 'fa fa-refresh tab-btn';
-                NB.ToolBar.menus.publish.id = 'update-post';
+                tools.addClass(NB.ToolBar.menus.publish, 'hide');
+                tools.removeClass(NB.ToolBar.menus.update, 'hide');
                 myEditor.setValue(res.post.content.markdown);
+
+                win.location.hash = '#article=' + NB.currentPost.title;
               }
             });
           }
+          
         }, false);
 
         // // 获取文章列表
@@ -534,16 +534,21 @@
 
       // 新建文章
       newPost: function() {
+
+        if(NB.currentPost.content !== myEditor.getValue()) {
+          if(confirm('还未保存修改！  请前往保存。。。\n')) return NB.ToolBar.menus.update.click();
+        }
+
         doc.title = '后台管理/新建文章';
-        win.location.hash = '#action=new';
 
         NB.currentPost = {};
 
         myEditor.newPost();
-        tools.addClass(NB.ToolBar.menus.new, 'hide');
-        NB.ToolBar.menus.publish.children[0].innerText =  '发布文章';
-        NB.ToolBar.menus.publish.className = 'fa fa-paper-plane tab-btn';
-        NB.ToolBar.menus.publish.id = 'publish-post';
+
+        win.location.hash = '#action=new';
+        // tools.addClass(NB.ToolBar.menus.new, 'hide')
+        tools.addClass(NB.ToolBar.menus.update, 'hide');
+        tools.removeClass(NB.ToolBar.menus.publish, 'hide');
       },
 
       // 发布文章
@@ -552,7 +557,6 @@
         var post_title = doc.querySelector('.preview-content h1');
 
         doc.title = '后台管理/发布文章';
-        win.location.hash = '#action=publish';
 
         if(post_title) {
           NB.userInput.title.value = post_title.innerText;
@@ -578,11 +582,12 @@
 
             if(res.status === 'success') {
               NB.currentPost.id = res.post._id;
-              NB.ToolBar.menus.publish.children[0].innerText =  '更新文章';
-              NB.ToolBar.menus.publish.id = 'update-post';
-              NB.ToolBar.menus.publish.className = 'fa fa-refresh tab-btn';
+              tools.addClass(NB.ToolBar.menus.publish, 'hide');
+              tools.removeClass(NB.ToolBar.menus.update, 'hide');
               NB.currentPost.isDraft ? NB.SideBar.addNode(res.post, NB.draft, true) : NB.SideBar.addNode(res.post, NB.published, true);
             }
+
+            win.location.hash = '#article=' + NB.currentPost.title;
           });
         });
         Button.cancle();
@@ -593,13 +598,11 @@
         var wrapper_header = doc.querySelector('.wrapper-header');
 
         doc.title = '后台管理/更新文章';
-        win.location.hash = '#action=update';
 
         NB.userInput.title.value = NB.currentPost.title;
         NB.userInput.tags.value = NB.currentPost.tags;
         NB.userInput.category.value = NB.currentPost.category;
         NB.userInput.isDraft.checked = NB.currentPost.isDraft;
-
 
         wrapper_header.innerHTML = '<i class="fa fa-refresh"></i> 更新文章';
 
@@ -620,6 +623,9 @@
 
             NB.Modal.hide();
             NB.ToolBar.displayStatusMsg(res.status, res.detail);
+
+            win.location.hash = '#article=' + NB.currentPost.title;
+            doc.querySelector('.current-post').childNodes[0].data = NB.currentPost.title;
           });
         });
         Button.cancle();
@@ -653,8 +659,6 @@
         unBindHandler();
         bindHandler();
 
-
-        // NB.expressions.addEventListener('click', fn, false);
       },
 
       // 设置
@@ -764,7 +768,7 @@
 
       setTimeout(function() {
         document.body.removeChild(loader);
-      }, 1600);
+      }, 3000);
 
     },
 

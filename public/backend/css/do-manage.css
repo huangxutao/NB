@@ -42,7 +42,7 @@ html,body{
   left: 0;
   background:#fff;
   z-index: 999;
-  animation: fadeOutLoader ease 3s forwards;
+  animation: fadeOutLoader ease 2.6s forwards;
 }
 
 .loader p{
