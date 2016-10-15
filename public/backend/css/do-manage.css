@@ -531,6 +531,96 @@ ul.expressions{
 }
 /* 表情框 --- End */
 
+/* 插入图片 --- Start */
+input[name="img-url"]{
+  width: 60%;
+}
+
+input[type="file"] {
+  cursor: pointer;
+}
+
+.or{
+  position: relative;
+  color: #bbb;
+  font-weight: bold;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.or:before{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  content: "";
+  margin: auto;
+  width: 45%;
+  height: .12rem;
+  background: #eee;
+}
+
+.or:after{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  content: "";
+  margin: auto;
+  width: 45%;
+  height: .12rem;
+  background: #eee;
+}
+
+#upload-btn{
+  position: relative;
+  display: inline-block;
+  color: #fff;
+  border: .1rem solid #ecedf1;
+  border-radius: .28rem;
+}
+
+#upload-btn i{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  width: 2.8rem;
+  height: 2.8rem;
+  line-height: 2.8rem;
+  text-align: center;
+  font-size: 2.2rem;
+}
+
+#upload-btn input[type="file"]{
+  opacity: 0;
+}
+
+#upload-btn .upload-progress{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  border: .1rem #ccc solid;
+  background: #eee;
+}
+
+#upload-btn .upload-progress::-webkit-progress-bar{
+    background: #d7d7d7;
+}
+
+#upload-btn .upload-progress::-webkit-progress-value{
+    background: #35bdb2;
+}
+
+/* 插入图片 --- End */
+
 
 /* 选项卡组件 --- Start */
 .tab-btns{

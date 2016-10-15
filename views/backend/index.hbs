@@ -16,6 +16,7 @@
     <i id="update-post" class="fa fa-refresh tab-btn hide"><span class="tooltip">更新博文</span></i>
     <i id="preview-post" class="fa fa-desktop"><span class="tooltip">预览</span></i>
     <i id="insert-expression" class="fa fa-smile-o tab-btn"><span class="tooltip">插入表情</span></i>
+    <i id="insert-img" class="fa fa-picture-o tab-btn"><span class="tooltip">插入图片</span></i>
     <!--<i id="setting" class="fa fa-cog tab-btn"><span class="tooltip">设置</span></i>-->
   </div>
   <!-- markdown 编辑区 -->
@@ -37,9 +38,12 @@
     <div class="item">
       {{> emojis}}
     </div>
-    <div class="item">
-      {{> setting}}
+    <div id="uploader" class="item">
+      {{> img}}
     </div>
+    <!--<div class="item">
+      {{> setting}}
+    </div>-->
   </div>
 </div>
 {{#extend "scripts"}}

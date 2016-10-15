@@ -64,12 +64,12 @@ exports.show = function(req, res) {
   var query = req.query;
   var page = query.page ? parseInt(query.page, 10) : 1;
   console.log(query);
-  res.render(layout('index'), { title: '主页' ,site: config.site});
+  res.render(layout('index'), { title: '主页', site: config.site});
 };
 
 exports.manage = function(req, res) {
   var emojis = ['😁', '😂', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😌', '😍', '😏', '😒', '😓', '😔', '😘', '😜', '😝', '😣', '😫', '😭', '😰', '😨', '😤', '😱', '🙅', '🙌', '🙋', '🙈', '✌', 'ℹ', '⏰', '☀', '☕', '✔', '✖', '❓', '❤'];
-  return req.session.user ? res.render('backend/index', {title: '后台管理', emojis: emojis}) : res.redirect('/do-manage/signin');
+  return req.session.user ? res.render('backend/index', {title: '后台管理', emojis: emojis, qiniu_domain: config.qiniu.domain}) : res.redirect('/do-manage/signin');
 };
 
 exports.Signin = function(req, res) {

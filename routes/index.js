@@ -1,6 +1,7 @@
 var express = require('express');
 var router  = express.Router();
 var blog    = require('../controller/blog');
+var qiniu    = require('../controller/qiniu');
 
 var layout = function(template) {
   var config = require('../config.js');
@@ -21,5 +22,6 @@ router.post('/to-delete', blog.toDelete);
 router.post('/get-post', blog.getPost);
 router.post('/get-posts', blog.getPosts);
 
+router.get('/qiniu-uploader', qiniu.upload);
 
 module.exports = router;

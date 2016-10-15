@@ -1,0 +1,10 @@
+<h1 class="wrapper-header"><i class="fa fa-picture-o"></i> 插入图片</h1>
+<div class="wrapper-content">
+  <p><label for="img-url">图片地址：</label><input type="text" name="img-url" autofocus id="img-url"placeholder="https://example.com/img.jpg"></p>
+  <p class="or">OR</p>
+  <p id="qiniu-domain" data-qiniudomain = "{{qiniu_domain}}"><label for="img-upload">本地上传：</label><span id="upload-btn"><progress id="upload-progress" class="upload-progress" min="0" max="100" value="0">0</progress><i class="fa fa-cloud-upload"></i><input type="file" name="img-upload" autofocus required id="img-upload"></span></p>
+</div>
+<div class="wrapper-footer">
+  <button type="button" name="cancle" class="cancle">取 消</button>
+  <button type="button" name="confirm" class="confirm">确 认</button>
+</div>

@@ -18,14 +18,9 @@
     });
 
     if(configuration.auto_marked) {
-      var value = '';
-
-      this.editing_area.addEventListener('keyup', function(event) {
-        if(value !== self.getValue()) {
-          self.preview_area.innerHTML = marked(self.getValue());
-        }
-        value = self.getValue();
-      }, false);
+      this.CodeMirror.on('change', function(editor, changes) {
+        self.preview_area.innerHTML = marked(self.getValue());
+      });
     }
 
     if(configuration.sync_scroll) {
@@ -235,12 +230,17 @@
     // 清除输入框的 value
     clearData: function() {
       var input = doc.querySelectorAll('.modal input');
+      var progress = doc.querySelectorAll('progress');
 
       Button.confirm_btn.innerHTML = '确认';
 
       for(var i = 0, len = input.length; i < len; i++) {
         input[i].value = '';
         if(input[i].type === 'checkbox') input[i].checked = false;
+      }
+
+      for(var j = 0, l = progress.length; j < l; j++) {
+        progress[j].value = 0;
       }
     },
 
@@ -597,8 +597,6 @@
       updatePost: function() {
         var wrapper_header = doc.querySelector('.wrapper-header');
 
-        doc.title = '后台管理/更新文章';
-
         NB.userInput.title.value = NB.currentPost.title;
         NB.userInput.tags.value = NB.currentPost.tags;
         NB.userInput.category.value = NB.currentPost.category;
@@ -661,6 +659,22 @@
 
       },
 
+      insertImg: function() {
+        
+        this.displayModal(2);
+
+        doc.querySelectorAll('.confirm')[1].onclick = function() {
+          var img_url = doc.querySelector('#img-url').value;
+          var img = '![](' + img_url + ')';
+          myEditor.insertValue(img);
+          NB.Modal.hide();
+        }
+
+        doc.querySelectorAll('.cancle')[1].onclick = function() {
+          NB.Modal.hide();
+        }
+      },
+
       // 设置
       doSetting: function() {
         doc.title = '后台管理/Setting';
@@ -707,6 +721,10 @@
 
             case 'insert-expression':
               NB.ToolBar.insertExpression();
+              break;
+
+            case 'insert-img':
+              NB.ToolBar.insertImg();
               break;
 
             case 'setting':

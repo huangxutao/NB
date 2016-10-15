@@ -10,7 +10,8 @@ var gulp         = require('gulp'),
  * task minifyjs
  */
  gulp.task('minifyjs', function() {
-   var js = ['public/backend/js/codemirror.js', 'public/backend/js/markdown.js', 'public/backend/js/marked.min.js', 'public/backend/js/tools.js', 'public/backend/js/do-manage.js'];
+   var js = ['public/backend/js/src/codemirror/codemirror.js', 'public/backend/js/src/codemirror/markdown.js', 'public/backend/js/src/marked/marked.min.js', 'public/backend/js/src/qiniu/plupload.min.js', 'public/backend/js/src/qiniu/qiniu.js', 'public/backend/js/src/tools.js', 'public/backend/js/src/do-manage.js', 'public/backend/js/src/uploader.js'];
+   var js2 = ['public/backend/js/src/tools.js', 'public/backend/js/src/signin.js']
    return gulp.src(js)
      .pipe(concat('all.js'))
      .pipe(rename({suffix: '.min'}))
