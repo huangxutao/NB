@@ -13,6 +13,7 @@ router.get('/', blog.show);
 /* 后台管理 */
 router.get('/do-manage', blog.manage);
 router.get('/do-manage/signin', blog.Signin);
+router.get('/do-manage/signout', blog.Signout);
 
 router.post('/to-signin', blog.toSignin);
 router.post('/to-publish', blog.toPublish);

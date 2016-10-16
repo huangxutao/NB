@@ -242,6 +242,30 @@ button[name="cancle"]:hover{
 }
 /* 侧栏区 --- End */
 
+/* SignOut --- Start */
+.signout{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3.2rem;
+  background: #475160;
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 3.2rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.signin i{
+  font-size: 2rem;
+}
+
+.signout:hover{
+  color: #f44336;
+}
+
+/* SignOut --- End */
 
 /* 主要内容区 --- Start */
 .contents{

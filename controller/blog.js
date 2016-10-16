@@ -59,22 +59,43 @@ function completeHTML(str) {
   }
 }
 
+
+
+
+
 /****** GET ******/
+// 前端
 exports.show = function(req, res) {
   var query = req.query;
   var page = query.page ? parseInt(query.page, 10) : 1;
-  console.log(query);
+
   res.render(layout('index'), { title: '主页', site: config.site});
 };
 
+// 后台登录
+exports.Signin = function(req, res) {
+  return res.render('backend/signin', { title: '登录' ,site: config.site});
+};
+
+// 后台登出
+exports.Signout = function(req, res) {
+  return req.session.destroy(function() {
+    res.redirect('/do-manage/signin');
+  });
+};
+
+// 后台管理
 exports.manage = function(req, res) {
   var emojis = ['😁', '😂', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😌', '😍', '😏', '😒', '😓', '😔', '😘', '😜', '😝', '😣', '😫', '😭', '😰', '😨', '😤', '😱', '🙅', '🙌', '🙋', '🙈', '✌', 'ℹ', '⏰', '☀', '☕', '✔', '✖', '❓', '❤'];
+  
   return req.session.user ? res.render('backend/index', {title: '后台管理', emojis: emojis, qiniu_domain: config.qiniu.domain}) : res.redirect('/do-manage/signin');
 };
 
-exports.Signin = function(req, res) {
-  res.render('backend/signin', { title: '登录' ,site: config.site});
-};
+
+
+
+
+
 
 /****** POST ******/
 exports.toSignin = function(req, res) {
@@ -97,7 +118,6 @@ exports.toPublish = function(req, res) {
     if(req.body.title === '' || req.body.tags === '' || req.body.content === '') {
       res.json({status: 'fail', detail: '数据不能为空'});
     } else {
-      console.log(req.body);
       createArticle();
     }
   }
@@ -121,7 +141,6 @@ exports.toPublish = function(req, res) {
     };
 
     post.create(article, function(err, thisPost) {
-      console.log('当前发布：', thisPost);
       return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '发布成功', post: {_id: thisPost._id, title: thisPost.title}});
     });
   }
@@ -131,8 +150,6 @@ exports.toDelete = function(req, res) {
   if(!req.session.user) return res.json({result: 'fail', detail: '登录超时请重新登录'});
 
   deleteArticle();
-
-  console.log(req.body);
 
   function deleteArticle() {
     post.remove({_id: req.body.id}, function(err) {
@@ -177,14 +194,14 @@ exports.toUpdate = function(req, res) {
 };
 
 exports.getPost = function(req, res) {
-  console.log('请求的id',req.body);
+  if(!req.session.user) return res.json({result: 'fail', detail: '登录超时请重新登录'});
   post.getOne(req.body.id, function(err, post) {
     return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: '载入成功', post: post});
   });
 };
 
 exports.getPosts = function(req, res) {
-  console.log('请求的文章归类',req.body);
+  if(!req.session.user) return res.json({result: 'fail', detail: '登录超时请重新登录'});
   if(req.body.archive === 'published') {
     post.getPublished(function(err, posts) {
       return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: posts});

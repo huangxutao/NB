@@ -445,6 +445,9 @@
                 myEditor.setValue(res.post.content.markdown);
 
                 win.location.hash = '#article=' + NB.currentPost.title;
+                doc.title = '后台管理 - ' + NB.currentPost.title;
+              } else {
+                NB.ToolBar.displayStatusMsg(res.status, res.detail);
               }
             });
           }
@@ -484,16 +487,6 @@
         expression: doc.querySelector('#insert-expression'),
         setting: doc.querySelector('#setting')
       },
-
-
-      // displayMenu: function() {
-
-      //   // 编辑区全屏时 显示预览 menu
-      //   if(tools.hasClass(NB.Contents.edite, 'full-content')) {
-      //     tools.removeClass(NB.ToolBar.menus.preview, 'hide');
-      //   }
-
-      // },
 
       // 显示提示信息
       displayStatusMsg: function(type, msg) {
@@ -546,7 +539,6 @@
         myEditor.newPost();
 
         win.location.hash = '#action=new';
-        // tools.addClass(NB.ToolBar.menus.new, 'hide')
         tools.addClass(NB.ToolBar.menus.update, 'hide');
         tools.removeClass(NB.ToolBar.menus.publish, 'hide');
       },
@@ -685,7 +677,6 @@
 
       // 初始化
       init: function() {
-        // this.displayMenu();
 
         var fn = function(e) {
           var self = this;
@@ -788,6 +779,7 @@
         document.body.removeChild(loader);
       }, 3000);
 
+      console.info('%c欢迎反馈%cissue%c:\n%chttps://github.com/huangxutao/NB/issues','font-size:14px;','font-size:22px;color: #35bdb2;','font-size: 14px;', 'font-size: 22px;color: #35bdb2');
     },
 
   };

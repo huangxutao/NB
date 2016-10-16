@@ -1,7 +1,7 @@
 var gulp         = require('gulp'),
     watchPath    = require('gulp-watch-path'),
     autopreFixer = require('gulp-autoprefixer'),
-    minifyCss    = require('gulp-clean-css'),
+    cleanCSS    = require('gulp-clean-css'),
     concat       = require('gulp-concat'),
     uglify       = require('gulp-uglify'),
     rename       = require('gulp-rename');
@@ -20,3 +20,15 @@ var gulp         = require('gulp'),
 });
 
 
+/***
+ * task minifycss
+ */
+gulp.task('minifycss', function() {
+  var css = ['public/backend/css/src/do-manage.css', 'public/backend/css/src/font-awesome.min.css', 'public/backend/css/src/codemirror.css'];
+  var css2 = ['public/backend/css/src/signin.css', 'public/backend/css/src/font-awesome.min.css'];
+  return gulp.src(css)
+    .pipe(concat('all.css'))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(cleanCSS({compatibility: 'ie8'}))
+    .pipe(gulp.dest('public/backend/css/'));
+});
