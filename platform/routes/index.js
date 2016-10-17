@@ -3,11 +3,6 @@ var router  = express.Router();
 var blog    = require('../controller/blog');
 var qiniu    = require('../controller/qiniu');
 
-var layout = function(template) {
-  var config = require('../config.js');
-  return 'themes/'+ config.theme +'/layout/' + template;
-};
-
 router.get('/', blog.show);
 
 /* 后台管理 */

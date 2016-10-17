@@ -29,7 +29,7 @@ hbs.registerHelper('block', function(name) {
   return val;
 });
 
-hbs.registerPartials(__dirname + '/views/themes/default/partials');
+hbs.registerPartials(__dirname + '/views/layout/partials');
 hbs.registerPartials(__dirname + '/views/backend/partials');
 
 // view engine setup

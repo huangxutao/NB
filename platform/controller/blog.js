@@ -3,10 +3,6 @@ var marked = require('marked');
 var post   = require('../models/post');
 var config = require('../config.js');
 
-var layout = function(template) {
-  return 'themes/'+ config.theme + '/' + template;
-};
-
 /* rewrite the marked method */
 var renderer = new marked.Renderer();
 
@@ -69,7 +65,7 @@ exports.show = function(req, res) {
   var query = req.query;
   var page = query.page ? parseInt(query.page, 10) : 1;
 
-  res.render(layout('index'), { title: '主页', site: config.site});
+  res.render('layout/index', { title: '主页', site: config.site});
 };
 
 // 后台登录

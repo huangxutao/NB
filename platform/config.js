@@ -24,10 +24,7 @@ var config = {
     access_key: 'n5zFTyAmqbikpE7-pgoOaAu1kZvfJjVA4bK1q5v9',
     secret_key: 'MdVuorRwRm2Jfph0Dp51EpX7wTNPL4FdNDaqoUsW',
     domain: 'https://oblky3j33.qnssl.com/'
-  },
-
-  // 主题
-  theme: 'default'
+  }
 };
 
 module.exports = config;

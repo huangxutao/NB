@@ -1,5 +1,9 @@
 dump.rdb
 npm-debug.log
-node_modules/
-public/themes/
-views/themes/
+platform/dump.rdb
+platform/npm-debug.log
+platform/node_modules/
+platform/views/layout/
+platform/public/source/
+
+!themes/default/
