@@ -20,10 +20,13 @@ setTheme() {
   fi
 
 # 检测主题是否存在
-  until [ -d themes/$themeName/ -o $themeName == "" ]
-  # until [[ -d themes/$themeName/ || $themeName == "" ]] 有问题，无法正确处理回车，上面这个又会报 " [: too many arguments " 的错误
+  until [ -d themes/$themeName/ ] && [ $themeName != "" ]
   do
-    echo -e "There is no Theme named $themeName !!! (Press 'Ctrl + C' to quit.)\n\n"
+    if [ $themeName != "" ]; then
+      echo -e "You have not enter the theme name. (Press 'Ctrl + C' to quit.)\n\n"
+    else
+      echo -e "There is no Theme named $themeName !!! (Press 'Ctrl + C' to quit.)\n\n"
+    fi
     echo -n "Enter your theme name: > "
     read themeName
   done
