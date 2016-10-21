@@ -11,10 +11,14 @@ var PostSchema = new mongoose.Schema({
   content: {
     html: String,
     markdown: String,
-    summary: String
+    summary: {
+      html: String,
+      text: String
+    }
   },
   tags: String,
   category: String,
+  views: Number,
   isDraft: Boolean
 });
 

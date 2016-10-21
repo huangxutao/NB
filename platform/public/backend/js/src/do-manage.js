@@ -210,12 +210,12 @@
     auto_marked: true,
     sync_scroll: true,
     url: {
-      publish: '/to-publish',
-      update: '/to-update',
-      delete: '/to-delete',
-      draft: '/to-save-draft',
-      get_post: '/get-post',
-      get_posts: '/get-posts'
+      publish: '/do-manage/to-publish',
+      update: '/do-manage/to-update',
+      delete: '/do-manage/to-delete',
+      draft: '/do-manage/to-save-draft',
+      get_post: '/do-manage/get-post',
+      get_posts: '/do-manage/get-posts'
     }
   });
 

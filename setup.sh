@@ -20,9 +20,9 @@ setTheme() {
   fi
 
 # 检测主题是否存在
-  until [ -d themes/$themeName/ ] && [ $themeName != "" ]
+  until [ -d themes/$themeName/ ] && [ "$themeName" != "" ]
   do
-    if [ $themeName = "" ]; then
+    if [ "$themeName" = "" ]; then
       echo -e "You have not enter the theme name. (Press 'Ctrl + C' to quit.)\n\n"
     else
       echo -e "There is no Theme named $themeName !!! (Press 'Ctrl + C' to quit.)\n\n"

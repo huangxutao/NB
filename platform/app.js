@@ -9,7 +9,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var routes       = require('./routes/index');
 
-var app    = express();
+
+/***
+ * for hbs helper
+ */
 var blocks = {};
 
 hbs.registerHelper('extend', function(name, context) {
@@ -29,8 +32,41 @@ hbs.registerHelper('block', function(name) {
   return val;
 });
 
+// get format date
+hbs.registerHelper('toFormatDate', function(date) {
+  var date = {
+    year: date.getFullYear().toString(),
+    month: date.getMonth() < 9 ? '0' + ( date.getMonth() + 1 ) : ( date.getMonth() + 1 ),
+    day: date.getDate() < 9 ? '0' + date.getDate() : date.getDate()
+  };
+
+  return date.year + '-' + date.month + '-' + date.day;
+});
+
+// get year
+hbs.registerHelper('toGetYear', function(date) {
+  return date.getFullYear().toString();
+});
+
+// get month
+hbs.registerHelper('toGetMonth', function(date) {
+  return date.getMonth() < 9 ? '0' + ( date.getMonth() + 1 ) : ( date.getMonth() + 1 );
+});
+
+// get day
+hbs.registerHelper('toGetDay', function(date) {
+  return date.getDate() < 9 ? '0' + date.getDate() : date.getDate();
+});
+
 hbs.registerPartials(__dirname + '/views/layout/partials');
 hbs.registerPartials(__dirname + '/views/backend/partials');
+
+
+
+/***
+ * for app
+ */
+var app    = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -48,6 +84,17 @@ app.use(session({
   cookie: { maxAge: 60 * 1000 * 60 }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// check session
+app.use(function(req, res, next) {
+  var url = req.originalUrl;
+  var method = req.method;
+
+  if(/\/do-manage/.test(url) && !req.session.user && url !== '/do-manage/signin') {
+    return method === 'GET' ? res.redirect('/do-manage/signin') : res.json({result: 'fail', detail: '登录超时请重新登录'});
+  }
+  next();
+});
 
 app.use('/', routes);
 

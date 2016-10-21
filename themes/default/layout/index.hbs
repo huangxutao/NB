@@ -1,0 +1,53 @@
+{{#extend "stylesheets"}}
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_1476841462_6481016.css">
+  <link rel="stylesheet" href="../source/css/style.css">
+{{/extend}}
+
+<div class="wrapper">
+  <div class="text">
+    <p>NB</p>
+  </div>
+</div>
+{{> header }}
+<div class="content">
+  {{#each posts}}
+    {{#if this}}
+      <div class="row">
+        <div class="post-cover-img">
+          <img src="source/images/4.jpg" alt="">
+          <a href="/post">
+            <div class="more">
+              <span class="views"><i class="icon-icoviews"></i> {{{ toGetYear this.date.publish }}}</span>
+              <span class="comments"><i class="icon-comments"></i> 5</span>
+          </div>
+          </a>
+        </div>
+        <h1 class="post-title"><a href="/post?article={{ this._id }}">{{ this.title }}</a></h1>
+        <div class="post-content-summary">
+          <p>{{ this.content.summary.text }}</p>
+        </div>
+        <div class="post-msg">
+          <span class="calendar"><i class="icon-calendar"></i> {{{ toFormatDate this.date.publish }}}</span>/
+          <span class="category"><i class="icon-category"></i> <a href="">{{ this.category }}</a></span>
+        </div>
+      </div>
+    {{/if}}
+  {{/each}}
+</div>
+
+<div class="footer">
+  <p>
+    <span class="coyright">
+      © 2016 <i class="icon-aixin"></i>
+      <a href="https://hxtao.site/about/">HXTAO</a> |
+      <a href="https://github.com/huangxutao/NB" target="_blank"><i class="icon-github"></i></a>
+    </span>
+    <span class="power">
+      Powered by <a href="https://nodejs.org/">NodeJs</a>
+    </span>
+  </p>
+</div>
+
+{{#extend "scripts"}}
+  <!--<script src="../backend/js/all.min.js"></script>-->
+{{/extend}}

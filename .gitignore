@@ -3,7 +3,7 @@ npm-debug.log
 platform/dump.rdb
 platform/npm-debug.log
 platform/node_modules/
-platform/views/layout/
-platform/public/source/
+platform/views/layout
+platform/public/source
 
 !themes/default/
