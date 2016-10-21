@@ -2,16 +2,6 @@
 
 ## Just For Fun
 
-
-## API:
-
-| 用途 | URL |
-|---|---|
-| 获取首页 | / |
-| 获取文章页 | /post?article={article_id} |
-| 获取归档页 | /archive |
-
-
 A Node Blog System.
 
 Still Coding...
