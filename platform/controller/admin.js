@@ -116,7 +116,7 @@ function article(req, option) {
 
 // show 后台登录界面
 exports.showSignin = function(req, res) {
-  return res.render('backend/signin', { title: '登录' ,site: config.site});
+  return res.render('backend/signin', { title: '登录' ,site: config.site });
 };
 
 // admin 登出

@@ -15,20 +15,20 @@
       <div class="row">
         <div class="post-cover-img">
           <img src="source/images/4.jpg" alt="">
-          <a href="/post">
+          <a href="./post/?article={{ this._id }}">
             <div class="more">
-              <span class="views"><i class="icon-icoviews"></i> {{{ toGetYear this.date.publish }}}</span>
-              <span class="comments"><i class="icon-comments"></i> 5</span>
+              <span class="views"><i class="icon-icoviews"></i> {{ this.views }}</span>
+              <span class="comments"><i class="icon-comments"></i> 0</span>
           </div>
           </a>
         </div>
-        <h1 class="post-title"><a href="/post?article={{ this._id }}">{{ this.title }}</a></h1>
+        <h1 class="post-title"><a href="./post/?article={{ this._id }}">{{ this.title }}</a></h1>
         <div class="post-content-summary">
           <p>{{ this.content.summary.text }}</p>
         </div>
         <div class="post-msg">
           <span class="calendar"><i class="icon-calendar"></i> {{{ toFormatDate this.date.publish }}}</span>/
-          <span class="category"><i class="icon-category"></i> <a href="">{{ this.category }}</a></span>
+          <span class="category"><i class="icon-category"></i> <a href="./category/?name={{ this.category }}">{{ this.category }}</a></span>
         </div>
       </div>
     {{/if}}
@@ -49,5 +49,5 @@
 </div>
 
 {{#extend "scripts"}}
-  <!--<script src="../backend/js/all.min.js"></script>-->
+  <script src="../source/js/script.js"></script>
 {{/extend}}

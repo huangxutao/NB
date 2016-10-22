@@ -30,11 +30,8 @@
 	};
 
   ajax({
-    type: 'POST',
-    url: '/get-posts',
-    data: {
-      page: 8
-    },
+    type: 'GET',
+    url: '/test',
     success: function(request) {
       var res = JSON.parse(request.responseText);
       console.log(res);
