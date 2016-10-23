@@ -3,13 +3,16 @@
 # check update 在开发测试时可以先把 git pull 注释掉，避免不必要的麻烦
 git pull origin master
 
+# 获取动作参数是否为测试
+action=$1
+
 # 
 # Funtion 设置主题
 # 
 setTheme() {
   local themeName="default"
 
-  if [ "$1" = "test" ]
+  if [ "$action" = "test" ]
   then
    echo "测试 Starting..."
   else
