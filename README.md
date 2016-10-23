@@ -54,7 +54,7 @@ content 的 summary 属性：
 | 获取类别页 | /category/?name={category_name} |
 | 获取归档页 | /tag/?name={tag_name} |
 
-> ** 注 **： 如果需要返回 json 数据，在相应 url 的 query 上加入 `json=true` 即可
+> **注**： 如果需要返回 json 数据，在相应 url 的 query 上加入 `json=true` 即可
 >
 > 例如： 
 > - `/?json=true` 将获取首页的相关 json 数据

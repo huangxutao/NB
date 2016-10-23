@@ -29,12 +29,12 @@
 		}
 	};
 
-  ajax({
-    type: 'GET',
-    url: '/test',
-    success: function(request) {
-      var res = JSON.parse(request.responseText);
-      console.log(res);
-    }
-  });
+  // ajax({
+  //   type: 'GET',
+  //   url: '/test',
+  //   success: function(request) {
+  //     var res = JSON.parse(request.responseText);
+  //     console.log(res);
+  //   }
+  // });
 }());

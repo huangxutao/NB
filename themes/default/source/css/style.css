@@ -260,6 +260,38 @@ i{font-style: normal;font-family: "iconfont"}
   margin: 0 1rem;
 }
 
+.content .page-nav{
+  margin: 1rem auto;
+  max-width: 55rem;
+}
+
+.content .page-nav:after{
+  display: block;
+  content: "";
+  clear: both;
+}
+
+.content .page-nav a{
+  display: block;
+  padding: .4rem 1.6rem;
+  color: #666;
+  background: #fff;
+  border-radius: .2rem;
+  transition: all .32s ease;
+}
+
+.content .page-nav a:hover{
+  color: #000;
+  box-shadow: .04rem .1rem .1rem #bbb;
+}
+
+.content .page-nav .pre{
+  float: left;
+}
+
+.content .page-nav .next{
+  float: right;
+}
 
 
 /*底部信息*/

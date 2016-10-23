@@ -14,25 +14,33 @@
     {{#if this}}
       <div class="row">
         <div class="post-cover-img">
-          <img src="source/images/4.jpg" alt="">
-          <a href="./post/?article={{ this._id }}">
+          <img src="../source/images/4.jpg" alt="">
+          <a href="/post/?article={{ this._id }}">
             <div class="more">
               <span class="views"><i class="icon-icoviews"></i> {{ this.views }}</span>
               <span class="comments"><i class="icon-comments"></i> 0</span>
           </div>
           </a>
         </div>
-        <h1 class="post-title"><a href="./post/?article={{ this._id }}">{{ this.title }}</a></h1>
+        <h1 class="post-title"><a href="/post/?article={{ this._id }}">{{ this.title }}</a></h1>
         <div class="post-content-summary">
           <p>{{ this.content.summary.text }}</p>
         </div>
         <div class="post-msg">
           <span class="calendar"><i class="icon-calendar"></i> {{{ toFormatDate this.date.publish }}}</span>/
-          <span class="category"><i class="icon-category"></i> <a href="./category/?name={{ this.category }}">{{ this.category }}</a></span>
+          <span class="category"><i class="icon-category"></i> <a href="/category/?name={{ this.category }}">{{ this.category }}</a></span>
         </div>
       </div>
     {{/if}}
   {{/each}}
+  <div class="page-nav">
+    {{#if page.hasPre}}
+      <a href="/page/?num={{ page.pre_num }}" class="pre">上一页</a>
+    {{/if}}
+    {{#if page.hasNext}}
+      <a href="/page/?num={{ page.next_num }}" class="next">下一页</a>
+    {{/if}}
+  </div>
 </div>
 
 <div class="footer">

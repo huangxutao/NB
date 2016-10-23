@@ -19,17 +19,35 @@ function handleError(err, res) {
 exports.showIndex = function(req, res) {
   console.log('show 博客首页');
 
-  var query = req.query;
-  var page = query.page ? parseInt(query.page, 10) : 1;
+  var page = req.query.num ? parseInt(req.query.num, 10) : 1;
 
-  post.getPage(page, function(err, result) {
-    if(err) return console.log(err);
-    return (req.query.json !== 'true') ? res.render('layout/index', {
-      title: '主页',
-      site: config.site,
-      posts: result
-    }) :
-    res.json({status: 'success', posts: result});
+  console.log('Page:',page)
+
+  post.getCount(function(err, count) {
+    if(err) return handleError(err, res);
+
+    post.getPage(page, function(err, result) {
+      var data;
+
+      if(err) return handleError(err, res);
+
+      else if(result.length === 0) return res.redirect('./');
+
+      data = {
+        title: '主页',
+        site: config.site,
+        posts: result,
+        page: {
+          pre_num: page - 1,
+          curr_num: page,
+          next_num: page + 1,
+          hasPre: (page - 1) > 0,
+          hasNext: ((page-1) * 8 + result.length) < count
+        }
+      };
+      
+      return (req.query.json !== 'true') ? res.render('layout/index', data) : res.json(data);
+    });
   });
 };
 
@@ -47,21 +65,21 @@ exports.showPost = function(req, res) {
       if(err) return handleError(err, res);
 
       post.getNextArticle(article, function(err, nextArticle) {
+        var data;
+
         if(err) return handleError(err, res);
 
-        var this_article = {
-          pre: preArticle,
-          curr: currArticle,
-          next: nextArticle
-        }
-
-        return (req.query.json !== 'true') ? res.render('layout/post', {
+        data = {
           title: currArticle.title,
-          site: config,
-          article: this_article
-        }) :
-        res.json({status: 'success', article: this_article});
+          site: config.site,
+          article: {
+            pre: preArticle,
+            curr: currArticle,
+            next: nextArticle
+          }
+        };
 
+        return (req.query.json !== 'true') ? res.render('layout/post', data) : res.json(data);
       });
     });
   });
@@ -72,14 +90,17 @@ exports.showArchive = function(req, res) {
   console.log('show 归档页');
 
   post.getArchive(function(err, result) {
+    var data;
+
     if(err) return handleError(err, res);
 
-    return (req.query.json !== 'true') ? res.render('layout/archive', {
+    data = {
       title: 'ARCHIVE',
-      site: config,
+      site: config.site,
       posts: result
-    }) :
-    res.json({status: 'success', posts: result});
+    };
+
+    return (req.query.json !== 'true') ? res.render('layout/archive', data) : res.json(data);
 
   });
 };
@@ -87,6 +108,37 @@ exports.showArchive = function(req, res) {
 // show 分页
 exports.showPage = function(req, res) {
   console.log('show 分页');
+
+  var page = req.query.num ? parseInt(req.query.num, 10) : 1;
+
+  if(isNaN(page)) return res.redirect('./');
+
+  post.getCount(function(err, count) {
+    if(err) return handleError(err, res);
+
+    post.getPage(page, function(err, result) {
+      var data;
+
+      if(err) return handleError(err, res);
+
+      else if(result.length === 0) return res.redirect('./');
+
+      data = {
+        title: '博客 | Page' + page,
+        site: config.site,
+        posts: result,
+        page: {
+          pre_num: page - 1,
+          curr_num: page,
+          next_num: page + 1,
+          hasPre: (page - 1) > 0,
+          hasNext: ((page-1) * 8 + result.length) < count
+        }
+      };
+      
+      return (req.query.json !== 'true') ? res.render('layout/index', data) : res.json(data);
+    });
+  });
 }
 
 // show 特定类别页
@@ -95,12 +147,17 @@ exports.showCategory = function(req, res) {
   console.log('show 特定类别页');
   
   post.getCategory(req.query.name, function(err, result) {
-    return (req.query.json !== 'true') ? res.render('layout/category', {
+    var data;
+
+    if(err) return handleError(err, res);
+
+    data = {
       title: 'CATEGORY=' + req.query.name,
-      site: config,
+      site: config.site,
       posts: result
-    }) :
-    res.json({status: 'success', posts: result});
+    };
+
+    return (req.query.json !== 'true') ? res.render('layout/category', data) : res.json(data);
   });
 }
 
@@ -110,11 +167,16 @@ exports.showTag = function(req, res) {
   console.log('show 特定标签页');
   
   post.getTag(req.query.name, function(err, result) {
-    return (req.query.json !== 'true') ? res.render('layout/tag', {
+    var data;
+
+    if(err) return handleError(err, res);
+
+    data = {
       title: 'TAG=' + req.query.name,
       site: config,
       posts: result
-    }) :
-    res.json({status: 'success', posts: result});
+    };
+
+    return (req.query.json !== 'true') ? res.render('layout/tag', data) : res.json(data);
   });
 }
