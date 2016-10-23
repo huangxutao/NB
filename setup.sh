@@ -9,27 +9,32 @@ git pull origin master
 setTheme() {
   local themeName="default"
 
-  echo -n "Use default theme ? (y/n) > "
-
-  read
-
-  if [ "$REPLY" == "n" ]
+  if [ "$1" = "test" ]
   then
-    echo -n "Enter your theme name: > "
-    read themeName
-  fi
+   echo "测试 Starting..."
+  else
+    echo -n "Use default theme ? (y/n) > "
 
-# 检测主题是否存在
-  until [ -d themes/$themeName/ ] && [ "$themeName" != "" ]
-  do
-    if [ "$themeName" = "" ]; then
-      echo -e "You have not enter the theme name. (Press 'Ctrl + C' to quit.)\n\n"
-    else
-      echo -e "There is no Theme named $themeName !!! (Press 'Ctrl + C' to quit.)\n\n"
+    read
+
+    if [ "$REPLY" == "n" ]
+    then
+      echo -n "Enter your theme name: > "
+      read themeName
     fi
-    echo -n "Enter your theme name: > "
-    read themeName
-  done
+
+  # 检测主题是否存在
+    until [ -d themes/$themeName/ ] && [ "$themeName" != "" ]
+    do
+      if [ "$themeName" = "" ]; then
+        echo -e "You have not enter the theme name. (Press 'Ctrl + C' to quit.)\n\n"
+      else
+        echo -e "There is no Theme named $themeName !!! (Press 'Ctrl + C' to quit.)\n\n"
+      fi
+      echo -n "Enter your theme name: > "
+      read themeName
+    done
+  fi
 
 # 模板文件
   if [ ! -L platform/views/layout ]
