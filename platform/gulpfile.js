@@ -1,10 +1,11 @@
 var gulp         = require('gulp'),
     watchPath    = require('gulp-watch-path'),
     autopreFixer = require('gulp-autoprefixer'),
-    cleanCSS    = require('gulp-clean-css'),
+    cleanCSS     = require('gulp-clean-css'),
     concat       = require('gulp-concat'),
     uglify       = require('gulp-uglify'),
-    rename       = require('gulp-rename');
+    rename       = require('gulp-rename'),
+    jshint       = require('gulp-jshint');
 
 /***
  * task minifyjs
@@ -31,4 +32,14 @@ gulp.task('minifycss', function() {
     .pipe(rename({suffix: '.min'}))
     .pipe(cleanCSS({compatibility: 'ie8'}))
     .pipe(gulp.dest('public/backend/css/'));
+});
+
+/***
+ * task jslint
+ */
+gulp.task('jslint', function() {
+  return gulp.src('public/backend/js/src/*.js')
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'))
+    .pipe(jshint.reporter('fail'));
 });

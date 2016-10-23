@@ -377,7 +377,7 @@
           } else if(NB.draft.children[0]){
             NB.draft.children[0].click();
           } else {
-            myEditor.setValue('# Welcome To Use NB')
+            myEditor.setValue('# Welcome To Use NB');
           }
         });
 
@@ -576,7 +576,11 @@
               NB.currentPost.id = res.post._id;
               tools.addClass(NB.ToolBar.menus.publish, 'hide');
               tools.removeClass(NB.ToolBar.menus.update, 'hide');
-              NB.currentPost.isDraft ? NB.SideBar.addNode(res.post, NB.draft, true) : NB.SideBar.addNode(res.post, NB.published, true);
+              if(NB.currentPost.isDraft) {
+                NB.SideBar.addNode(res.post, NB.draft, true);
+              } else {
+                NB.SideBar.addNode(res.post, NB.published, true);
+              }
             }
 
             win.location.hash = '#article=' + NB.currentPost.title;
@@ -660,11 +664,11 @@
           var img = '![](' + img_url + ')';
           myEditor.insertValue(img);
           NB.Modal.hide();
-        }
+        };
 
         doc.querySelectorAll('.cancle')[1].onclick = function() {
           NB.Modal.hide();
-        }
+        };
       },
 
       // 设置
