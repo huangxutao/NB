@@ -1,5 +1,7 @@
 # NB
 
+![](https://travis-ci.org/huangxutao/NB.svg?branch=master)
+
 ## Just For Fun
 
 A Node Blog System.
