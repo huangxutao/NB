@@ -26,5 +26,5 @@ exports.upload = function(req, res) {
     'Pragma': 'no-cache'
   });
 
-  res.end(JSON.stringify(token))
+  res.end(JSON.stringify(token));
 };

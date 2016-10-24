@@ -19,11 +19,11 @@ renderer.link = function(href, title, text) {
 };
 /* rewrite the marked method / END */
 
-/*** 
- * 
+/***
+ *
  * Function 完善 HTML 标签
  * @param { String } str 含有 html 标记的字符串
- * 
+ *
  */
 function completeHTML(str) {
   var regAllTag   = /<[^>]*>/ig;  // 正则 所有标签
@@ -61,12 +61,12 @@ function completeHTML(str) {
   }
 }
 
-/*** 
- * 
+/***
+ *
  * Function 处理文章
  * @param { Object } req 请求对象
  * @param { String } option 文章的类型　( 默认 new: 表示新建文章; 否则为　update 更新文章 )
- * 
+ *
  */
 function article(req, option) {
   var this_option = option || 'new';
@@ -129,7 +129,7 @@ exports.toSignout = function(req, res) {
 // show 后台界面
 exports.showIndex = function(req, res) {
   var emojis = ['😁', '😂', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😌', '😍', '😏', '😒', '😓', '😔', '😘', '😜', '😝', '😣', '😫', '😭', '😰', '😨', '😤', '😱', '🙅', '🙌', '🙋', '🙈', '✌', 'ℹ', '⏰', '☀', '☕', '✔', '✖', '❓', '❤'];
-  
+
   return res.render('backend/index', {title: '后台管理', emojis: emojis, qiniu_domain: config.qiniu.domain});
 };
 
@@ -155,7 +155,7 @@ exports.toPublish = function(req, res) {
   } else {
     this_article = article(req, 'new');
   }
-  
+
   post.create(this_article, function(err, thisPost) {
     return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '发布成功', post: {_id: thisPost._id, title: thisPost.title}});
   });

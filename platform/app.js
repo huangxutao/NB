@@ -34,13 +34,13 @@ hbs.registerHelper('block', function(name) {
 
 // get format date
 hbs.registerHelper('toFormatDate', function(date) {
-  var date = {
+  var this_date = {
     year: date.getFullYear().toString(),
     month: date.getMonth() < 9 ? '0' + ( date.getMonth() + 1 ) : ( date.getMonth() + 1 ),
     day: date.getDate() < 9 ? '0' + date.getDate() : date.getDate()
   };
 
-  return date.year + '-' + date.month + '-' + date.day;
+  return this_date.year + '-' + this_date.month + '-' + this_date.day;
 });
 
 // get year

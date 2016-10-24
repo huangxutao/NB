@@ -1,10 +1,10 @@
 var post   = require('../models/post');
 var config = require('../config.js');
 
-/*** 
- * 
+/***
+ *
  * Function handleError
- * 
+ *
  */
 function handleError(err, res) {
   res.status(404);
@@ -21,7 +21,7 @@ exports.showIndex = function(req, res) {
 
   var page = req.query.num ? parseInt(req.query.num, 10) : 1;
 
-  console.log('Page:',page)
+  console.log('Page:',page);
 
   post.getCount(function(err, count) {
     if(err) return handleError(err, res);
@@ -45,7 +45,7 @@ exports.showIndex = function(req, res) {
           hasNext: ((page-1) * 8 + result.length) < count
         }
       };
-      
+
       return (req.query.json !== 'true') ? res.render('layout/index', data) : res.json(data);
     });
   });
@@ -135,17 +135,17 @@ exports.showPage = function(req, res) {
           hasNext: ((page-1) * 8 + result.length) < count
         }
       };
-      
+
       return (req.query.json !== 'true') ? res.render('layout/index', data) : res.json(data);
     });
   });
-}
+};
 
 // show 特定类别页
 exports.showCategory = function(req, res) {
 
   console.log('show 特定类别页');
-  
+
   post.getCategory(req.query.name, function(err, result) {
     var data;
 
@@ -159,13 +159,13 @@ exports.showCategory = function(req, res) {
 
     return (req.query.json !== 'true') ? res.render('layout/category', data) : res.json(data);
   });
-}
+};
 
 // show 特定标签页
 exports.showTag = function(req, res) {
 
   console.log('show 特定标签页');
-  
+
   post.getTag(req.query.name, function(err, result) {
     var data;
 
@@ -179,4 +179,4 @@ exports.showTag = function(req, res) {
 
     return (req.query.json !== 'true') ? res.render('layout/tag', data) : res.json(data);
   });
-}
+};
