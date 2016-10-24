@@ -35,9 +35,9 @@ gulp.task('minifycss', function() {
 });
 
 /***
- * task jslint
+ * task jshint
  */
-gulp.task('jslint', function() {
+gulp.task('jshint', function() {
   return gulp.src('public/backend/js/src/*.js')
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
