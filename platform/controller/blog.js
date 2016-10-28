@@ -6,13 +6,14 @@ var config = require('../config.js');
  * Function handleError
  *
  */
-function handleError(err, res) {
-  res.status(404);
-  res.render('error', {
+function handleError(err, req, res) {
+  var err_msg = {
     title: '404',
     message: err.message,
     error: {}
-  });
+  };
+  res.status(404);
+  return (req.query.json !== 'true') ? res.render('error', err_msg) : res.json(err_msg);
 }
 
 // show 博客首页
@@ -24,12 +25,12 @@ exports.showIndex = function(req, res) {
   console.log('Page:',page);
 
   post.getCount(function(err, count) {
-    if(err) return handleError(err, res);
+    if(err) return handleError(err, req, res);
 
     post.getPage(page, function(err, result) {
       var data;
 
-      if(err) return handleError(err, res);
+      if(err) return handleError(err, req, res);
 
       else if(result.length === 0) return res.redirect('./');
 
@@ -59,15 +60,15 @@ exports.showPost = function(req, res) {
   var article =  req.query.article || '';
 
   post.getPreArticle(article, function(err, preArticle) {
-    if(err) return handleError(err, res);
+    if(err) return handleError(err, req, res);
 
     post.getCurrArticle(article, function(err, currArticle) {
-      if(err) return handleError(err, res);
+      if(err) return handleError(err, req, res);
 
       post.getNextArticle(article, function(err, nextArticle) {
         var data;
 
-        if(err) return handleError(err, res);
+        if(err) return handleError(err, req, res);
 
         data = {
           title: currArticle.title,
@@ -92,7 +93,7 @@ exports.showArchive = function(req, res) {
   post.getArchive(function(err, result) {
     var data;
 
-    if(err) return handleError(err, res);
+    if(err) return handleError(err, req, res);
 
     data = {
       title: 'ARCHIVE',
@@ -114,12 +115,12 @@ exports.showPage = function(req, res) {
   if(isNaN(page)) return res.redirect('./');
 
   post.getCount(function(err, count) {
-    if(err) return handleError(err, res);
+    if(err) return handleError(err, req, res);
 
     post.getPage(page, function(err, result) {
       var data;
 
-      if(err) return handleError(err, res);
+      if(err) return handleError(err, req, res);
 
       else if(result.length === 0) return res.redirect('./');
 
@@ -149,7 +150,7 @@ exports.showCategory = function(req, res) {
   post.getCategory(req.query.name, function(err, result) {
     var data;
 
-    if(err) return handleError(err, res);
+    if(err) return handleError(err, req, res);
 
     data = {
       title: 'CATEGORY=' + req.query.name,
@@ -169,7 +170,7 @@ exports.showTag = function(req, res) {
   post.getTag(req.query.name, function(err, result) {
     var data;
 
-    if(err) return handleError(err, res);
+    if(err) return handleError(err, req, res);
 
     data = {
       title: 'TAG=' + req.query.name,
