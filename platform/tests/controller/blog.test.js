@@ -28,7 +28,7 @@ exports.index = function(done) {
 };
 
 exports.post = function(done) {
-  checkHtml('/post', done);
+  checkHtml('/post/?article=1kladq313', done);
 };
 
 exports.archive = function(done) {
@@ -36,15 +36,15 @@ exports.archive = function(done) {
 };
 
 exports.tag = function(done) {
-  checkHtml('/tag', done);
+  checkHtml('/tag/?name=javascript', done);
 };
 
 exports.category = function(done) {
-  checkHtml('/category', done);
+  checkHtml('/category/?name=javascript', done);
 };
 
 exports.page = function(done) {
-  checkHtml('/page', done);
+  checkHtml('/page/?num=1', done);
 };
 
 
@@ -67,13 +67,13 @@ exports.archiveJson = function(done) {
 };
 
 exports.tagJson = function(done) {
-  checkJson('/tag/?json=true', done);
+  checkJson('/tag/?json=true&name=javascript', done);
 };
 
 exports.categoryJson = function(done) {
-  checkJson('/category/?json=true', done);
+  checkJson('/category/?json=true&name=javascript', done);
 };
 
 exports.pageJson = function(done) {
-  checkJson('/page/?json=true', done);
+  checkJson('/page/?json=true&num=1', done);
 };
