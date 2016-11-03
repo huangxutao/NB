@@ -19,7 +19,7 @@ services:
 
 #运行的脚本命令
 script:
-  - cd platform/ && npm install && gulp jshint
+  - cd platform/ && npm install && gulp jshint && npm test
 
 #指定分支，只有指定的分支提交时才会运行脚本
 branches:
