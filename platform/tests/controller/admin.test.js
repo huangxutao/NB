@@ -45,6 +45,7 @@ exports.toPublish = function(done) {
     content: '## 测试内容\n\n ### 测试内容\n\n [百度](baidu.com),![pic](https://baidu.com/image.jpg)',
     tags: 'test',
     category: 'NodeJs',
+    isDraft: false
   };
   request.post('/do-manage/to-publish')
     .set('Cookie', Cookies)

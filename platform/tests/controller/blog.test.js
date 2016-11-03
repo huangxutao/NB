@@ -36,6 +36,7 @@ exports.init = function(done) {
     content: '## 测试内容\n\n ### 测试内容\n\n [百度](baidu.com),![pic](https://baidu.com/image.jpg)',
     tags: 'test',
     category: 'NodeJs',
+    isDraft: false
   };
 
   request.post('/to-signin')
@@ -45,7 +46,7 @@ exports.init = function(done) {
         done(err);
       } else {
         Cookies = res.headers['set-cookie'].pop().split(';')[0];
-        
+
         request.post('/do-manage/to-publish')
           .set('Cookie', Cookies)
           .send(article)
