@@ -5,22 +5,26 @@ var should = require("should");
 
 var checkJson = function(url, done) {
   request.get(url)
-    .expect('Content-Type', /json/)
-    .end(function(err, res) {
-      console.log(res.type);
-      if(err) done(err);
-      else done();
-    });
+  .end(function(err, res){
+    if(err) {
+      done(err);
+    } else {
+      res.type.should.equal('application/json');
+      done();
+    }
+  });
 };
 
 var checkHtml = function(url, done) {
   request.get(url)
-    .expect('Content-Type', /html/)
-    .end(function(err, res) {
-      console.log(res.type);
-      if(err) done(err);
-      else done();
-    });
+  .end(function(err, res){
+    if(err) {
+      done(err);
+    } else {
+      res.type.should.equal('text/html');
+      done();
+    }
+  });
 };
 
 exports.index = function(done) {
