@@ -1,6 +1,7 @@
 # NB
 
-![](https://travis-ci.org/huangxutao/NB.svg?branch=master)
+![](https://travis-ci.org/huangxutao/NB.svg?branch=master) 
+[![codecov](https://codecov.io/gh/huangxutao/NB/branch/master/graph/badge.svg)](https://codecov.io/gh/huangxutao/NB)
 
 ## Just For Fun
 
@@ -58,7 +59,7 @@ content 的 summary 属性：
 
 > **注**： 如果需要返回 json 数据，在相应 url 的 query 上加入 `json=true` 即可
 >
-> 例如： 
+> 例如：
 > - `/?json=true` 将获取首页的相关 json 数据
 > - `/post/?article=helloworld&json=true`  将获取具体文章页的相关 json 数据
 
