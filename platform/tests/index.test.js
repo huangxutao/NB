@@ -37,6 +37,7 @@ describe('Test To Operate As Admin (./controller/admin.test.js)', function() {
  * 博客测试
  */
 describe('GET Page Data', function() {
+  before(blog.init);
   describe('With html', function() {
     this.timeout(10000);
     it('should get index', blog.index);
