@@ -6,7 +6,6 @@ node_js:
   - 4.4.5
   - 5
 before_install:
-  - cd NB/
   - ln -s themes/default/layout/ platform/views/ -r
   - ln -s themes/default/source/ platform/public/ -r
 
