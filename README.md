@@ -10,3 +10,7 @@ A Node Blog System.
 Still Coding...
 
 详见 [wiki](https://github.com/huangxutao/NB/wiki)
+
+## License
+
+MIT
