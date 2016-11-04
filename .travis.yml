@@ -6,8 +6,8 @@ node_js:
   - 4.4.5
   - 5
 before_install:
-  - ln -s themes/default/layout/ -r platform/views/
-  - ln -s themes/default/source/ -r platform/public/
+  - ln -s `pwd`/themes/default/layout  `pwd`/platform/views
+  - ln -s `pwd`/themes/default/source  `pwd`/platform/public
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
