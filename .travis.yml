@@ -5,7 +5,10 @@ language: node_js
 node_js:
   - 4.4.5
   - 5
-
+before_install:
+  - ln -s themes/$themeName/layout/ platform/views/ -r
+  - ln -s themes/$themeName/source/ platform/public/ -r
+  
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
@@ -22,7 +25,7 @@ services:
 
 #运行的脚本命令
 script:
-  - ln -s themes/$themeName/layout/ platform/views/ -r && ln -s themes/$themeName/source/ platform/public/ -r && cd platform/ && npm install && gulp jshint && npm test
+  - cd platform/ && npm install && gulp jshint && npm test
 
 #指定分支，只有指定的分支提交时才会运行脚本
 branches:
