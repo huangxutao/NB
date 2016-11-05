@@ -18,10 +18,11 @@ Still Coding...
  - Redis v3.2.1
  - MongoDB v3.2.10
 
-2.跑起服务：
+2.跑起服务(必须)：
 
-> 启动 Redis 和 MongoDB (必须)
-
+```
+启动 Redis 和 MongoDB
+```
 3.初始化站点：
 
 ```bash
@@ -30,12 +31,13 @@ Still Coding...
 
 4.访问站点：
 
-> http://localhost:3000
-
+```
+http://localhost:3000
+```
 ## Make Test
 
 ```bash
-make test
+cd platform/ && npm test
 ```
 
 
