@@ -21,6 +21,15 @@ renderer.link = function(href, title, text) {
 
 /***
  *
+ * Function 去除前后空白字符
+ * @param { String } str 目标字符串
+ *
+ */
+function trim(str) {
+  return str.replace(/^\s+|\s+$/g, '');
+}
+/***
+ *
  * Function 完善 HTML 标签
  * @param { String } str 含有 html 标记的字符串
  *
@@ -150,15 +159,14 @@ exports.toSignin = function(req, res) {
 exports.toPublish = function(req, res) {
   var this_article = {};
 
-  if(req.body.title === '' || req.body.tags === '' || req.body.content === '') {
+  if(trim(req.body.title) === '' || trim(req.body.tags) === '' ||trim( req.body.category) === '' || trim(req.body.content) === '') {
     res.json({status: 'fail', detail: '数据不能为空'});
   } else {
     this_article = article(req, 'new');
+    post.create(this_article, function(err, thisPost) {
+      return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '发布成功', post: {_id: thisPost._id, title: thisPost.title}});
+    });
   }
-
-  post.create(this_article, function(err, thisPost) {
-    return err ? res.json({status: 'fail', detail: '后台,操作数据库出错'}) : res.json({status: 'success', detail: '发布成功', post: {_id: thisPost._id, title: thisPost.title}});
-  });
 };
 
 // admin 删除文章
@@ -175,15 +183,14 @@ exports.toUpdate = function(req, res) {
   };
   var this_article = {};
 
-  if(req.body.title === '' || req.body.tags === '' || req.body.content === '') {
+  if(trim(req.body.title) === '' || trim(req.body.tags) === '' ||trim( req.body.category) === '' || trim(req.body.content) === '') {
     res.json({status: 'fail', detail: '数据不能为空'});
   } else {
     this_article = article(req, 'update');
+    post.update(query, this_article, function(err) {
+      return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: '更新成功'});
+    });
   }
-
-  post.update(query, this_article, function(err) {
-    return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: '更新成功'});
-  });
 };
 
 // admin 获取一篇文章
