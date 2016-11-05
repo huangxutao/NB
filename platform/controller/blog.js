@@ -9,7 +9,7 @@ var config = require('../config.js');
 function handleError(err, req, res) {
   var err_msg = {
     title: '404',
-    message: err.message,
+    message: err ? err.message: 'no post',
     error: {}
   };
   res.status(404);
@@ -25,7 +25,7 @@ exports.showIndex = function(req, res) {
   console.log('Page:',page);
 
   post.getCount(function(err, count) {
-    if(err) return handleError(err, req, res);
+    if(err || count === 0) return handleError(err, req, res);
 
     post.getPage(page, function(err, result) {
       var data;

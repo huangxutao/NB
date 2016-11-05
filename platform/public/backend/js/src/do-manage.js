@@ -287,6 +287,7 @@
 
     userInput: {
       title: doc.querySelector('#post-title'),
+      wrapper: doc.querySelector('#post-wrapper'),
       tags: doc.querySelector('#post-tag'),
       category: doc.querySelector('#post-category'),
       isDraft: doc.querySelector('#is-draft'),
@@ -434,6 +435,7 @@
                 NB.currentPost = {
                   id: res.post._id,
                   title: res.post.title,
+                  wrapper: res.post.wrapper,
                   tags: res.post.tags,
                   category: res.post.category,
                   content: res.post.content.markdown,
@@ -451,7 +453,7 @@
               }
             });
           }
-          
+
         }, false);
 
         // // 获取文章列表
@@ -561,6 +563,7 @@
         Button.confirm(function() {
           NB.currentPost = {
             title: NB.userInput.title.value,
+            wrapper: NB.userInput.wrapper.value,
             tags: NB.userInput.tags.value,
             category: NB.userInput.category.value,
             content: myEditor.getValue(),
@@ -594,6 +597,7 @@
         var wrapper_header = doc.querySelector('.wrapper-header');
 
         NB.userInput.title.value = NB.currentPost.title;
+        NB.userInput.wrapper.value = NB.currentPost.wrapper;
         NB.userInput.tags.value = NB.currentPost.tags;
         NB.userInput.category.value = NB.currentPost.category;
         NB.userInput.isDraft.checked = NB.currentPost.isDraft;
@@ -606,6 +610,7 @@
           NB.currentPost = {
             id: NB.currentPost.id ,
             title: NB.userInput.title.value,
+            wrapper: NB.userInput.wrapper.value,
             tags: NB.userInput.tags.value,
             category: NB.userInput.category.value,
             content: myEditor.getValue(),
@@ -656,7 +661,7 @@
       },
 
       insertImg: function() {
-        
+
         this.displayModal(2);
 
         doc.querySelectorAll('.confirm')[1].onclick = function() {

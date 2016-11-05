@@ -42,6 +42,7 @@ exports.page = function(done) {
 exports.toPublish = function(done) {
   var article = {
     title: '测试标题',
+    wrapper: '测试 wrapper',
     content: '## 测试内容\n\n ### 测试内容\n\n [百度](baidu.com),![pic](https://baidu.com/image.jpg)',
     tags: 'test',
     category: 'NodeJs',
@@ -66,6 +67,7 @@ exports.toUpdate = function(done) {
   var article = {
     id: articleId,
     title: '测试更新标题',
+    wrapper: '测试 wrapper',
     content: '## 测试更新内容\n\n ### 测试内容\n\n [百度](baidu.com),![pic](https://baidu.com/image.jpg)',
     tags: 'test,update',
     category: 'NodeJs',

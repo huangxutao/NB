@@ -85,6 +85,7 @@ function article(req, option) {
   if(this_option === 'new') {
     return {
       title: req.body.title,
+      wrapper: req.body.wrapper,
       date: {
         publish: date,
         update: date
@@ -106,6 +107,7 @@ function article(req, option) {
     return {
       $set: {
         title: req.body.title,
+        wrapper: req.body.wrapper,
         'date.update': date,
         content: {
           html: htmlstr,
