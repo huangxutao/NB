@@ -44,7 +44,7 @@ PostSchema.static('getPage', function(page_num, cb) {
   cb);
 });
 
-// get 前一篇文章
+// get 前一篇文章,非草稿 (只获取文章的 title 和 id)
 PostSchema.static('getPreArticle', function(id, cb) {
   return this.findOne(
     {'_id': {'$gt': id}, 'isDraft': false},
@@ -53,7 +53,7 @@ PostSchema.static('getPreArticle', function(id, cb) {
   cb);
 });
 
-// get 一篇文章
+// get 一篇文章，非草稿 （获取文章大部分的信息）
 PostSchema.static('getCurrArticle', function(id, cb) {
   return this.findOne(
     {'_id': id},
@@ -61,7 +61,7 @@ PostSchema.static('getCurrArticle', function(id, cb) {
   cb);
 });
 
-// get 后一篇文文章
+// get 后一篇文文章 (只获取文章的 title 和 id)
 PostSchema.static('getNextArticle', function(id, cb) {
   return this.findOne(
     {'_id': {'$lt': id}, 'isDraft': false},
@@ -70,7 +70,7 @@ PostSchema.static('getNextArticle', function(id, cb) {
   cb);
 });
 
-// get 归档页
+// get 归档页，获取所有非草稿的文章的 title, id 和 date.publish
 PostSchema.static('getArchive', function(cb) {
   return this.find(
     {'isDraft': false},
@@ -79,7 +79,7 @@ PostSchema.static('getArchive', function(cb) {
   cb);
 });
 
-// get 特定标签页
+// get 特定标签页，获取所有具有该标签的文章 （欠考虑，应该考虑以分页的形式）
 PostSchema.static('getTag', function(tag, cb) {
   return this.find(
     {'tags': {$regex: tag}, 'isDraft': false},
@@ -88,7 +88,7 @@ PostSchema.static('getTag', function(tag, cb) {
   cb);
 });
 
-// get 特定类别页
+// get 特定类别页，获取该分类所有的文章 （欠考虑，应该考虑以分页的形式）
 PostSchema.static('getCategory', function(category, cb) {
   return this.find(
     {'category': category, 'isDraft': false},
@@ -97,7 +97,7 @@ PostSchema.static('getCategory', function(category, cb) {
   cb);
 });
 
-// get 已发布的文章 (后台)
+// get 已发布的文章 (后台) （欠考虑，应该考虑以分页的形式）
 PostSchema.static('getPublished', function(cb) {
   return this.find(
     {'isDraft': false},
@@ -106,7 +106,7 @@ PostSchema.static('getPublished', function(cb) {
   cb);
 });
 
-// get 草稿 (后台)
+// get 草稿 (后台) （欠考虑，应该考虑以分页的形式）
 PostSchema.static('getDraft', function(cb) {
   return this.find(
     {'isDraft': true},
