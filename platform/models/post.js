@@ -21,7 +21,10 @@ var PostSchema = new mongoose.Schema({
   },
   tags: String,
   category: String,
-  views: Number,
+  views: {
+    detail: Array, // [view_IP, view_count, last_view_time]
+    count: Number // all count
+  },
   isDraft: Boolean
 });
 

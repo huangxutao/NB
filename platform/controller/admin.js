@@ -100,7 +100,10 @@ function article(req, option) {
       },
       tags: req.body.tags,
       category: req.body.category,
-      views: 0,
+      views: {
+        detail: [],
+        count: 0,
+      },
       isDraft: req.body.isDraft
     };
   } else {

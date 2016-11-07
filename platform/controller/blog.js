@@ -65,6 +65,51 @@ exports.showPost = function(req, res) {
     post.getCurrArticle(article, function(err, currArticle) {
       if(err) return handleError(err, req, res);
 
+      var query = {
+        _id: article
+      };
+      var this_article;
+      var arr = currArticle.views.detail;  // 所有访客记录
+      var req_ip = req.ip.match(/\d+\.\d+\.\d+\.\d+/)[0];  // 当前访客 IP
+      var isNew = true;  // 是否为新访客
+      var date = new Date();
+      var count = currArticle.views.count;  // 总访问量
+
+      if(arr.length !== 0) {
+
+        for(var i = 0, len = arr.length; i < len; i++) {
+          if(arr[i].indexOf(req_ip) >= 0) {  // 若已有 IP 记录
+            if((date - arr[i][2]) > 1000 * 60 * 60) {  // 访问时间间隔一小时以上算一次访问
+              arr[i][1] += 1;  // 当前 IP 访问量
+              count += 1;  // 总访问量
+            }
+            arr[i][2] = date;
+            isNew = false;
+          }
+        }
+
+      } else {
+        isNew = true;
+      }
+
+      if(isNew) {
+        arr.push([req_ip, 1, date]);
+        count += 1;
+      }
+
+      this_article = {
+        $set: {
+          views: {
+            detail: arr,
+            count: count
+          }
+        }
+      };
+
+      post.update(query, this_article, function(err) {
+        if(err) return handleError();
+      });
+
       post.getNextArticle(article, function(err, nextArticle) {
         var data;
 
