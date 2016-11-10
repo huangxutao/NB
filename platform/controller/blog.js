@@ -18,11 +18,8 @@ function handleError(err, req, res) {
 
 // show 博客首页
 exports.showIndex = function(req, res) {
-  console.log('show 博客首页');
 
   var page = req.query.num ? parseInt(req.query.num, 10) : 1;
-
-  console.log('Page:',page);
 
   post.getCount(function(err, count) {
     if(err || count === 0) return handleError(err, req, res);
@@ -54,8 +51,6 @@ exports.showIndex = function(req, res) {
 
 // show 具体文章页
 exports.showPost = function(req, res) {
-
-  console.log('show 具体文章页');
 
   var article =  req.query.article || '';
 
@@ -133,7 +128,6 @@ exports.showPost = function(req, res) {
 
 // show 归档页
 exports.showArchive = function(req, res) {
-  console.log('show 归档页');
 
   post.getArchive(function(err, result) {
     var data;
@@ -153,7 +147,6 @@ exports.showArchive = function(req, res) {
 
 // show 分页
 exports.showPage = function(req, res) {
-  console.log('show 分页');
 
   var page = req.query.num ? parseInt(req.query.num, 10) : 1;
 
@@ -190,8 +183,6 @@ exports.showPage = function(req, res) {
 // show 特定类别页
 exports.showCategory = function(req, res) {
 
-  console.log('show 特定类别页');
-
   post.getCategory(req.query.name, function(err, result) {
     var data;
 
@@ -209,8 +200,6 @@ exports.showCategory = function(req, res) {
 
 // show 特定标签页
 exports.showTag = function(req, res) {
-
-  console.log('show 特定标签页');
 
   post.getTag(req.query.name, function(err, result) {
     var data;
