@@ -19,15 +19,15 @@ renderer.link = function(href, title, text) {
 };
 /* rewrite the marked method / END */
 
-/***
- *
- * Function 去除前后空白字符
- * @param { String } str 目标字符串
- *
- */
-function trim(str) {
-  return str.replace(/^\s+|\s+$/g, '');
-}
+// /***
+//  *
+//  * Function 去除前后空白字符
+//  * @param { String } str 目标字符串
+//  *
+//  */
+// function trim(str) {
+//   return str.replace(/^\s+|\s+$/g, '');
+// }
 /***
  *
  * Function 完善 HTML 标签
@@ -164,7 +164,7 @@ exports.toSignin = function(req, res) {
 exports.toPublish = function(req, res) {
   var this_article = {};
 
-  if(trim(req.body.title) === '' || trim(req.body.tags) === '' ||trim( req.body.category) === '' || trim(req.body.content) === '') {
+  if(req.body.title.trim() === '' || req.body.tags.trim() === '' || req.body.category.trim() === '' || req.body.content.trim() === '') {
     res.json({status: 'fail', detail: '数据不能为空'});
   } else {
     this_article = article(req, 'new');
@@ -188,7 +188,7 @@ exports.toUpdate = function(req, res) {
   };
   var this_article = {};
 
-  if(trim(req.body.title) === '' || trim(req.body.tags) === '' ||trim( req.body.category) === '' || trim(req.body.content) === '') {
+  if(req.body.title.trim() === '' || req.body.tags.trim() === '' || req.body.category.trim() === '' || req.body.content.trim() === '') {
     res.json({status: 'fail', detail: '数据不能为空'});
   } else {
     this_article = article(req, 'update');
