@@ -152,7 +152,7 @@ exports.toSignin = function(req, res) {
   var user = config.user;
 
   req.session.user = false;
-  if(req.body.user === user.name && req.body.password === user.password) {
+  if(req.body.name === user.name && req.body.password === user.password) {
     req.session.user = true;
     res.json({status: 'success'});
   } else {

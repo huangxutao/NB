@@ -2,11 +2,11 @@
   var signinForm = doc.querySelector('.signin');
   var User = {
     toSignin: function() {
-      var user = doc.querySelector('#user');
+      var name = doc.querySelector('#name');
       var password = doc.querySelector('#password');
       var warning = doc.querySelector('.warning');
 
-      if(user.value === '' || password.value === '') {
+      if(name.value === '' || password.value === '') {
         warning.innerText = 'Can not submit with empty value!';
         tools.addClass(warning, 'show-warning');
         return false;
@@ -18,7 +18,7 @@
           type: 'POST',
           url: '/to-signin',
           data: {
-            user: user.value,
+            name: name.value,
             password: password.value
           },
           success: function(request) {
