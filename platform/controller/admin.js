@@ -8,15 +8,6 @@ var renderer = new marked.Renderer();
 renderer.heading = function (text, level) {
   return '<h' + level + ' id="' + text.toLowerCase() + '">' + text + '</h' + level + '>\n';
 };
-
-renderer.link = function(href, title, text) {
-  var out = '<a href="' + href + '"';
-  if (title) {
-    out += ' title="' + title + '"';
-  }
-  out += ' target="_blank">' + text + '</a>';
-  return out;
-};
 /* rewrite the marked method / END */
 
 // /***
