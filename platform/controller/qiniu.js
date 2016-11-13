@@ -6,9 +6,6 @@ exports.upload = function(req, res) {
   qiniu.conf.ACCESS_KEY = config.qiniu.access_key;
   qiniu.conf.SECRET_KEY = config.qiniu.secret_key;
 
-  //要上传的空间
-  bucket = 'hxtao-site';
-
   //构建上传策略函数
   function uptoken(bucket, key) {
     var putPolicy = new qiniu.rs.PutPolicy(bucket);
@@ -17,7 +14,7 @@ exports.upload = function(req, res) {
 
   //生成上传 Token
   var token = {
-    uptoken: uptoken(bucket)
+    uptoken: uptoken(config.qiniu.bucket)
   };
 
   res.writeHead(200, {
