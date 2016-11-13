@@ -1,120 +1,119 @@
+var support = require('../support/support');
 var app = require('../../app');
-var config = require('../../config');
 var request = require('supertest')(app);
 var should = require("should");
 
-var Cookies;
-
+var blog = {};
+var article = {};
 
 var checkJson = function(url, done) {
   request.get(url)
-  .end(function(err, res){
-    if(err) {
-      done(err);
-    } else {
-      res.type.should.equal('application/json');
-      done();
-    }
-  });
-};
-
-var checkHtml = function(url, done) {
-  request.get(url)
-  .end(function(err, res){
-    if(err) {
-      done(err);
-    } else {
-      res.type.should.equal('text/html');
-      done();
-    }
-  });
-};
-
-exports.init = function(done) {
-  var article = {
-    title: '测试标题',
-    content: '## 测试内容\n\n ### 测试内容\n\n [百度](baidu.com),![pic](https://baidu.com/image.jpg)',
-    tags: 'test',
-    category: 'NodeJs',
-    isDraft: false
-  };
-
-  request.post('/to-signin')
-    .send({user: config.user.name, password: config.user.password})
     .end(function(err, res){
       if(err) {
         done(err);
       } else {
-        Cookies = res.headers['set-cookie'].pop().split(';')[0];
-
-        request.post('/do-manage/to-publish')
-          .set('Cookie', Cookies)
-          .send(article)
-          .end(function(err, res){
-            if(err) {
-              done(err);
-            } else {
-              res.type.should.equal('application/json');
-              res.body.status.should.equal("success");
-              articleId = res.body.post._id;
-              done();
-            }
-          });
+        res.type.should.equal('application/json');
+        done();
       }
     });
 };
 
-exports.index = function(done) {
+var checkHtml = function(url, done) {
+  request.get(url)
+    .end(function(err, res){
+      if(err) {
+        done(err);
+      } else {
+        res.type.should.equal('text/html');
+        done();
+      }
+    });
+};
+
+blog.index = function(done) {
   checkHtml('/', done);
 };
 
-exports.post = function(done) {
-  checkHtml('/post/?article=1kladq313', done);
+blog.post = function(done) {
+  checkHtml('/post/?article=' + article._id, done);
 };
 
-exports.archive = function(done) {
+blog.archive = function(done) {
   checkHtml('/archive', done);
 };
 
-exports.tag = function(done) {
-  checkHtml('/tag/?name=javascript', done);
+blog.tag = function(done) {
+  checkHtml('/tag/?name=' + article.tags, done);
 };
 
-exports.category = function(done) {
-  checkHtml('/category/?name=javascript', done);
+blog.category = function(done) {
+  checkHtml('/category/?name=' + article.category, done);
 };
 
-exports.page = function(done) {
+blog.page = function(done) {
   checkHtml('/page/?num=1', done);
 };
 
-
-
-
-
-
 ///////
 
-exports.indexJson = function(done) {
+blog.indexJson = function(done) {
   checkJson('/?json=true', done);
 };
 
-exports.postJson = function(done) {
-  checkJson('/post/?json=true', done);
+blog.postJson = function(done) {
+  checkJson('/post/?json=true&article=' + article._id, done);
 };
 
-exports.archiveJson = function(done) {
+blog.archiveJson = function(done) {
   checkJson('/archive/?json=true', done);
 };
 
-exports.tagJson = function(done) {
-  checkJson('/tag/?json=true&name=javascript', done);
+blog.tagJson = function(done) {
+  checkJson('/tag/?json=true&name=' + article.tags, done);
 };
 
-exports.categoryJson = function(done) {
-  checkJson('/category/?json=true&name=javascript', done);
+blog.categoryJson = function(done) {
+  checkJson('/category/?json=true&name=' + article.category, done);
 };
 
-exports.pageJson = function(done) {
+blog.pageJson = function(done) {
   checkJson('/page/?json=true&num=1', done);
+};
+
+exports.test = function() {
+  describe('GET Page Data', function() {
+    before(function(done) {
+      support.createArticle(function(a) {
+        console.log('===========================>>>>>> Create Article');
+        article = a;
+        done();
+      });
+    });
+
+    after(function(done) {
+      console.log('============================>>>>>> Remove Article');
+      support.removeArticle(article._id);
+      done();
+    });
+
+    describe('With html', function() {
+      this.timeout(10000);
+      it('should get index', blog.index);
+      it('should get post', blog.post);
+      it('should get archive', blog.archive);
+      it('should get tag', blog.tag);
+      it('should get category', blog.category);
+      it('should get page', blog.page);
+    });
+
+    describe('With Json', function() {
+      this.timeout(10000);
+      it('should get index', blog.indexJson);
+      it('should get post', blog.postJson);
+      it('should get archive', blog.archiveJson);
+      it('should get tag', blog.tagJson);
+      it('should get category', blog.categoryJson);
+      it('should get page', blog.pageJson);
+    });
+  });
 };

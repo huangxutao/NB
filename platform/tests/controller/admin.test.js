@@ -1,45 +1,20 @@
+var support = require('../support/support');
 var app = require('../../app');
-var config = require('../../config');
 var request = require('supertest')(app);
 var should = require("should");
 
+var admin = {};
 var Cookies;
 var articleId;
 
-// 登录
-exports.signin = function(done) {
-  request.post('/to-signin')
-    .send({user: config.user.name, password: config.user.password})
-    .end(function(err, res){
-      if(err) {
-        done(err);
-      } else {
-        Cookies = res.headers['set-cookie'].pop().split(';')[0];
-        res.type.should.equal('application/json');
-        done();
-      }
-    });
-};
-
-// 登出
-exports.signout = function(done) {
-  request.get('/do-manage/signout')
-    .set('Cookie', Cookies)
-    .end(function(err, res) {
-      done(err);
-    });
-};
-
-// Admin Page
-exports.page = function(done) {
+admin.page = function(done) {
   request.get('/do-manage')
-   .set('Cookie', Cookies)
+   .set('Cookie', support.adminCookie)
    .redirects(1)
    .expect(200, done);
 };
 
-// 发表文章
-exports.toPublish = function(done) {
+admin.toPublish = function(done) {
   var article = {
     title: '测试标题',
     wrapper: '测试 wrapper',
@@ -49,7 +24,7 @@ exports.toPublish = function(done) {
     isDraft: false
   };
   request.post('/do-manage/to-publish')
-    .set('Cookie', Cookies)
+    .set('Cookie', support.adminCookie)
     .send(article)
     .end(function(err, res){
       if(err) {
@@ -63,17 +38,17 @@ exports.toPublish = function(done) {
     });
 };
 
-exports.toUpdate = function(done) {
+admin.toUpdate = function(done) {
   var article = {
     id: articleId,
     title: '测试更新标题',
     wrapper: '测试 wrapper',
-    content: '## 测试更新内容\n\n ### 测试内容\n\n [百度](baidu.com),![pic](https://baidu.com/image.jpg)',
+    content: '## 测试更新内容\n\n ### 测试内容\n\n [百度](baidu.com),![pic](https://oblky3j33.qnssl.com/images/css-tricks-attr.png)\n [百度](https://baidu.com)',
     tags: 'test,update',
     category: 'NodeJs',
   };
   request.post('/do-manage/to-update')
-    .set('Cookie', Cookies)
+    .set('Cookie', support.adminCookie)
     .send(article)
     .end(function(err, res){
       if(err) {
@@ -86,9 +61,9 @@ exports.toUpdate = function(done) {
     });
 };
 
-exports.toDelete = function(done) {
+admin.toDelete = function(done) {
   request.post('/do-manage/to-delete')
-    .set('Cookie', Cookies)
+    .set('Cookie', support.adminCookie)
     .send({id: articleId})
     .end(function(err, res){
       if(err) {
@@ -101,9 +76,9 @@ exports.toDelete = function(done) {
     });
 };
 
-exports.getPost = function(done) {
+admin.getPost = function(done) {
   request.post('/do-manage/get-post')
-  .set('Cookie', Cookies)
+  .set('Cookie', support.adminCookie)
   .send({id: articleId})
   .end(function(err, res){
     if(err) {
@@ -116,9 +91,44 @@ exports.getPost = function(done) {
   });
 };
 
-exports.getPosts = function(done) {
+admin.getPostsPublished = function(done) {
   request.post('/do-manage/get-posts')
-    .set('Cookie', Cookies)
+    .set('Cookie', support.adminCookie)
     .send({archive: "published"})
-    .expect(200, done);
+    .end(function(err, res){
+      if(err) {
+        done(err);
+      } else {
+        res.type.should.equal('application/json');
+        res.body.status.should.equal('success');
+        done();
+      }
+    });
+};
+
+admin.getPostsDraft = function(done) {
+  request.post('/do-manage/get-posts')
+    .set('Cookie', support.adminCookie)
+    .send({archive: "draft"})
+    .end(function(err, res){
+      if(err) {
+        done(err);
+      } else {
+        res.type.should.equal('application/json');
+        res.body.status.should.equal('success');
+        done();
+      }
+    });
+};
+
+exports.test = function() {
+  describe('Test To Operate As Admin (./controller/admin.test.js)', function() {
+    it('should response with 200 and status equal success, when the send request.', admin.page);
+    it('should response with 200 and status equal success, when the send request.', admin.toPublish);
+    it('should response with 200 and status equal success, when the send request.', admin.toUpdate);
+    it('should response with 200 and status equal success, when the send request.', admin.toDelete);
+    it('should response with 200 and status equal success, when the send request.', admin.getPost);
+    it('should response with 200 and status equal success, when the send request.', admin.getPostsPublished);
+    it('should response with 200 and status equal success, when the send request.', admin.getPostsDraft);
+  });
 };

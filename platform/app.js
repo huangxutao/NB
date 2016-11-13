@@ -85,6 +85,19 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+console.log('\n---- NODE_ENV ===>>>', app.get('env'));
+
+
+// for test
+app.use(function(req, res, next) {
+  if (app.get('env') === 'development' && req.cookies.developer === 'test_developer' && req.ip === '::ffff:127.0.0.1') {
+    console.log('===========================>>>>>> Wow! developer. <<<<<<===========================');
+    req.session.user = true;
+  }
+  next();
+});
+
+
 // check session
 app.use(function(req, res, next) {
   var url = req.originalUrl;
