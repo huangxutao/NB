@@ -89,7 +89,7 @@ function article(req, option) {
           text: htmlstr.replace(/<[^>]+>/g, '').substring(0, 140)
         }
       },
-      tags: req.body.tags,
+      tags: req.body.tags.split(','),
       category: req.body.category,
       views: {
         detail: [],
@@ -111,7 +111,7 @@ function article(req, option) {
             text: htmlstr.replace(/<[^>]+>/g, '').substring(0, 140)
           }
         },
-        tags: req.body.tags,
+        tags: req.body.tags.split(','),
         category: req.body.category,
         isDraft: req.body.isDraft
       }

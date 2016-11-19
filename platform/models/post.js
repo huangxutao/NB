@@ -19,7 +19,7 @@ var PostSchema = new mongoose.Schema({
       text: String
     }
   },
-  tags: String,
+  tags: Array,
   category: String,
   views: {
     detail: Array, // [view_IP, view_count, last_view_time]
