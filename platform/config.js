@@ -1,6 +1,7 @@
 var config = {
   // 以下三项为 SEO
   site: {
+    hometitle: 'Elliot\' blog', // 站点主页的 <title>???</title>
     author: '站点拥有者',
     description: '关于站点的描述',
     keywords: '关键词',

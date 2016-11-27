@@ -1,3 +1,29 @@
-{{# each posts}}
-  <p>{{ this }}</p>
-{{/each}}
+{{!-- css文件 --}}
+{{#extend "stylesheets"}}
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_65jv62efjjfhto6r.css">
+  <link rel="stylesheet" href="../source/css/style.min.css">
+{{/extend}}
+{{!-- 主体内容 --}}
+<div class="content archive">
+  <div class="header">
+    <h1><i class="icon-title"></i> 归档</h1>
+  </div>
+  <div class="go-back">
+    <a href="javascript:history.go(-1);" title="返回上一页"><i class="icon-back"></i></a>
+  </div>
+  <div class="row">
+    {{# each posts}}
+    <ul class="lists">
+      <li class="year-num">{{{toGetYear this.[0].date.publish}}}</li>
+      {{# each this}}
+      <li><span class="date-num">{{{toGetMonth this.date.publish}}}-{{{toGetDay this.date.publish}}}</span><a href="/post/?article={{this._id}}">{{this.title}}</a></li>
+      {{/each}}
+    </ul>
+    {{/each}}
+  </div>
+  <div class="footer">
+    <p><i class="icon-pen"></i> Nothing seek, Nothing find.</p>
+  </div>
+</div>
+{{!-- 底部版权信息 --}}
+{{>footer}}

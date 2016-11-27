@@ -1,0 +1,43 @@
+{{!-- css文件 --}}
+{{#extend "stylesheets"}}
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_65jv62efjjfhto6r.css">
+  <link rel="stylesheet" href="/source/css/style.min.css">
+{{/extend}}
+{{!-- js文件 --}}
+{{#extend "scripts"}}
+  <script src="/source/js/script.min.js"></script>
+{{/extend}}
+{{!-- 头部导航 --}}
+{{>header}}
+{{!-- 主体内容 --}}
+<div class="content">
+  {{!-- 页面导航 --}}
+  {{>pagenav}}
+  {{#each posts}}
+    {{#if this}}
+      <div class="row">
+        <div class="post-cover-img">
+          <img src="{{this.wrapper}}" alt="">
+          <a href="/post/?article={{this._id}}">
+            <div class="more">
+              <span class="views"><i class="icon-icoviews"></i> {{this.views.count}}</span>
+              <span class="loves"><i class="icon-love"></i> {{{toGetLength this.loves}}}</span>
+          </div>
+          </a>
+        </div>
+        <h1 class="post-title"><a href="/post/?article={{this._id}}">{{this.title}}</a></h1>
+        <div class="post-content-summary markdown-body">
+          {{{this.content.summary.html}}}
+        </div>
+        <div class="post-msg">
+          <span class="calendar"><i class="icon-calendar"></i> {{{toFormatDate this.date.publish}}}</span>/
+          <span class="category"><i class="icon-category"></i> <a href="/category/?name={{ this.category }}">{{this.category}}</a></span>
+        </div>
+      </div>
+    {{/if}}
+  {{/each}}
+  {{!-- 页面导航 --}}
+  {{>pagenav}}
+</div>
+{{!-- 底部版权信息 --}}
+{{>footer}}

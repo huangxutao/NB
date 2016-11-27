@@ -58,6 +58,11 @@ hbs.registerHelper('toGetDay', function(date) {
   return date.getDate() < 9 ? '0' + date.getDate() : date.getDate();
 });
 
+// get array length
+hbs.registerHelper('toGetLength', function(array) {
+  return array.length;
+});
+
 hbs.registerPartials(__dirname + '/views/layout/partials');
 hbs.registerPartials(__dirname + '/views/backend/partials');
 

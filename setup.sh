@@ -3,41 +3,33 @@
 # check update 在开发测试时可以先把 git pull 注释掉，避免不必要的麻烦
 git pull origin master
 
-# 获取动作参数是否为测试
-action=$1
-
-# 
+#
 # Funtion 设置主题
-# 
+#
 setTheme() {
   local themeName="default"
 
-  if [ "$action" = "test" ]
+  echo -n "Use default theme ? (y/n) > "
+
+  read
+
+  if [ "$REPLY" == "n" ]
   then
-   echo "测试 Starting..."
-  else
-    echo -n "Use default theme ? (y/n) > "
-
-    read
-
-    if [ "$REPLY" == "n" ]
-    then
-      echo -n "Enter your theme name: > "
-      read themeName
-    fi
-
-  # 检测主题是否存在
-    until [ -d themes/$themeName/ ] && [ "$themeName" != "" ]
-    do
-      if [ "$themeName" = "" ]; then
-        echo -e "You have not enter the theme name. (Press 'Ctrl + C' to quit.)\n\n"
-      else
-        echo -e "There is no Theme named $themeName !!! (Press 'Ctrl + C' to quit.)\n\n"
-      fi
-      echo -n "Enter your theme name: > "
-      read themeName
-    done
+    echo -n "Enter your theme name: > "
+    read themeName
   fi
+
+# 检测主题是否存在
+  until [ -d themes/$themeName/ ] && [ "$themeName" != "" ]
+  do
+    if [ "$themeName" = "" ]; then
+      echo -e "You have not enter the theme name. (Press 'Ctrl + C' to quit.)\n\n"
+    else
+      echo -e "There is no Theme named $themeName !!! (Press 'Ctrl + C' to quit.)\n\n"
+    fi
+    echo -n "Enter your theme name: > "
+    read themeName
+  done
 
 # 模板文件
   if [ ! -L platform/views/layout ]
@@ -64,6 +56,6 @@ setTheme
 # start the service
 cd platform/
 npm install
-npm start
+NODE_ENV=production npm start
 
 exit 0

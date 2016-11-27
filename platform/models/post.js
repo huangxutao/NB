@@ -22,9 +22,10 @@ var PostSchema = new mongoose.Schema({
   tags: Array,
   category: String,
   views: {
-    detail: Array, // [view_IP, view_count, last_view_time]
-    count: Number // all count
+    detail: Array,  // [view_IP, view_count, last_view_time]
+    count: Number  // all count
   },
+  loves: Array,  // [love_IP]
   isDraft: Boolean
 });
 

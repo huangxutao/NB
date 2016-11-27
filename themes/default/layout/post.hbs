@@ -1,10 +1,46 @@
+{{!-- css文件 --}}
 {{#extend "stylesheets"}}
-  <link rel="stylesheet" href="http://at.alicdn.com/t/font_1476841462_6481016.css">
-  <link rel="stylesheet" href="../source/css/style.css">
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_65jv62efjjfhto6r.css">
+  <link rel="stylesheet" href="../source/css/style.min.css">
 {{/extend}}
-
-<div class="content">
-  <div class="row">
+{{!-- js文件 --}}
+{{#extend "scripts"}}
+  <script src="/source/js/script.min.js"></script>
+{{/extend}}
+{{!-- 主体内容 --}}
+<div class="content post">
+  <div class="header">
+    <h1><i class="icon-title"></i> {{ article.curr.title }}</h1>
+    <div id="to-top" class="to-top"><i class="icon-top"></i> 返回顶部</div>
+  </div>
+  <div class="msg">
+    <span title="返回首页"><a href="/"><i class="icon-home"></i></a></span>
+    <span title="发布日期"><i class="icon-calendar"></i> {{{ toFormatDate article.curr.date.publish }}}</span>
+    <span title="标签"><i class="icon-tags"></i> {{#each article.curr.tags}}<a href="/tag/?name={{ this }}">{{ this }}</a> &nbsp;&nbsp; {{/each}}</span>
+    <span title="归档"><i class="icon-category"></i> <a href="/category/?name={{ article.curr.category }}">{{ article.curr.category }}</a></span>
+    <span title="浏览量"><i class="icon-icoviews"></i> {{ article.curr.views.count }}</span>
+  </div>
+  <div class="row markdown-body">
     {{{ article.curr.content.html }}}
   </div>
+  <div class="msg">
+    {{#if loved}}
+      <span class="loved"><i class="icon-love"></i>Thankyou for your support.</span>
+      {{else}}
+      <span id="to-love" data-id="{{article.curr._id}}"><i class="icon-love"></i>喜欢</span>
+    {{/if}}
+    <span><i class="icon-calendar"></i>最后更新于 {{{ toFormatDate article.curr.date.update }}}</span>
+  </div>
+  <div class="footer">
+    {{#if article.pre}}
+      <a href="?article={{ article.pre._id }}" class="pre"><i class="icon-pre"></i> {{ article.pre.title }}</a>
+    {{/if}}
+    {{#if article.next}}
+      <a href="?article={{ article.next._id }}" class="next">{{ article.next.title }} <i class="icon-next"></i></a>
+    {{/if}}
+  </div>
+  {{!-- 评论框 --}}
+  {{>comment}}
 </div>
+{{!-- 底部版权信息 --}}
+{{>footer}}

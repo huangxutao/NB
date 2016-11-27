@@ -8,3 +8,5 @@ platform/public/source
 platform/coverage/
 
 !themes/default/
+
+themes/default/node_modules/

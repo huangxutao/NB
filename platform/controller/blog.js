@@ -9,7 +9,7 @@ var config = require('../config.js');
 function handleError(err, req, res) {
   var err_msg = {
     title: '404',
-    message: err ? err.message: 'no post',
+    message: err ? err.message: 'no result',
     error: {}
   };
   res.status(404);
@@ -27,15 +27,14 @@ exports.showIndex = function(req, res) {
     post.getPage(page, function(err, result) {
       var data;
 
-      if(err) return handleError(err, req, res);
-
-      else if(result.length === 0) return res.redirect('./');
+      if(err || result.length === 0) return handleError(err, req, res);
 
       data = {
-        title: '主页',
+        title: config.site.hometitle,
         site: config.site,
         posts: result,
         page: {
+          count: (count%8 === 0) ? parseInt(count/8) : parseInt(count/8) + 1,
           pre_num: page - 1,
           curr_num: page,
           next_num: page + 1,
@@ -117,8 +116,14 @@ exports.showPost = function(req, res) {
             pre: preArticle,
             curr: currArticle,
             next: nextArticle
-          }
+          },
+          loved: false,
+          // layout: '/layout/layout'
         };
+
+        if(currArticle.loves.indexOf(req_ip) >= 0) {
+          data.loved = true;
+        }
 
         return (req.query.json !== 'true') ? res.render('layout/post', data) : res.json(data);
       });
@@ -131,13 +136,27 @@ exports.showArchive = function(req, res) {
 
   post.getArchive(function(err, result) {
     var data;
+    var year = result[0].date.publish.getFullYear();
+    var arr = [[]];
+    var j = 0;
 
-    if(err) return handleError(err, req, res);
+    for(var i = 0, len = result.length; i < len; i++) {
+      if(year === result[i].date.publish.getFullYear()) {
+        j = j;
+      } else {
+        j++;
+        year = result[i].date.publish.getFullYear();
+        arr.push([]);
+      }
+      arr[j].push(result[i]);
+    }
+
+    if(err || result.length === 0) return handleError(err, req, res);
 
     data = {
       title: 'ARCHIVE',
       site: config.site,
-      posts: result
+      posts: arr
     };
 
     return (req.query.json !== 'true') ? res.render('layout/archive', data) : res.json(data);
@@ -150,7 +169,9 @@ exports.showPage = function(req, res) {
 
   var page = req.query.num ? parseInt(req.query.num, 10) : 1;
 
-  if(isNaN(page)) return res.redirect('./');
+  if(isNaN(page) || page === 1) {
+    return req.query.json === 'true' ? res.redirect('/?json=true') : res.redirect('/');
+  }
 
   post.getCount(function(err, count) {
     if(err) return handleError(err, req, res);
@@ -160,13 +181,14 @@ exports.showPage = function(req, res) {
 
       if(err) return handleError(err, req, res);
 
-      else if(result.length === 0) return res.redirect('./');
+      else if(result.length === 0) return req.query.json === 'true' ? res.redirect('/?json=true') : res.redirect('/');
 
       data = {
-        title: '博客 | Page' + page,
+        title: config.site.hometitle + ' | Page' + page,
         site: config.site,
         posts: result,
         page: {
+          count: (count%8 === 0) ? parseInt(count/8) : parseInt(count/8) + 1,
           pre_num: page - 1,
           curr_num: page,
           next_num: page + 1,
@@ -175,7 +197,7 @@ exports.showPage = function(req, res) {
         }
       };
 
-      return (req.query.json !== 'true') ? res.render('layout/index', data) : res.json(data);
+      return (req.query.json !== 'true') ? res.render('layout/page', data) : res.json(data);
     });
   });
 };
@@ -186,10 +208,10 @@ exports.showCategory = function(req, res) {
   post.getCategory(req.query.name, function(err, result) {
     var data;
 
-    if(err) return handleError(err, req, res);
+    if(err || result.length === 0) return handleError(err, req, res);
 
     data = {
-      title: 'CATEGORY=' + req.query.name,
+      title: 'Category: ' + req.query.name,
       site: config.site,
       posts: result
     };
@@ -204,14 +226,52 @@ exports.showTag = function(req, res) {
   post.getTag(req.query.name, function(err, result) {
     var data;
 
-    if(err) return handleError(err, req, res);
+    if(err || result.length === 0) return handleError(err, req, res);
 
     data = {
-      title: 'TAG=' + req.query.name,
+      title: 'Tag: ' + req.query.name,
       site: config,
       posts: result
     };
 
     return (req.query.json !== 'true') ? res.render('layout/tag', data) : res.json(data);
+  });
+};
+
+exports.toLove = function(req, res) {
+  var query = {
+    _id: req.body.id
+  };
+
+  post.getCurrArticle(query, function(err, currArticle) {
+    var arr = currArticle.loves;
+    var req_ip = req.ip.match(/\d+\.\d+\.\d+\.\d+/)[0];  // 当前 love IP
+    var this_article = {};
+    var loved = true;
+
+    if(arr.length !== 0) {
+      if(arr.indexOf(req_ip) >= 0) {
+        loved = true;
+      } else {
+        loved = false;
+      }
+    } else {
+      loved = false;
+    }
+
+    if(!loved) {
+      arr.push(req_ip);
+    }
+
+    this_article = {
+      $set: {
+        loves: arr
+      }
+    };
+
+    post.update(query, this_article, function(err) {
+      return err ? res.json({status: 'fail', detail: '操作数据库出错'}) : res.json({status: 'success', detail: '更新成功'});
+    });
+
   });
 };

@@ -51,7 +51,24 @@ blog.category = function(done) {
 };
 
 blog.page = function(done) {
-  checkHtml('/page/?num=1', done);
+  request.get('/page/?num=1')
+    .expect(302, done);
+};
+
+blog.toLove = function(done) {
+  request.post('/to-love')
+    .send({
+      id: article._id
+    })
+    .end(function(err, res){
+      if(err) {
+        done(err);
+      } else {
+        res.type.should.equal('application/json');
+        res.body.status.should.equal('success');
+        done();
+      }
+    });
 };
 
 ///////
@@ -77,7 +94,8 @@ blog.categoryJson = function(done) {
 };
 
 blog.pageJson = function(done) {
-  checkJson('/page/?json=true&num=1', done);
+  request.get('/page/?json=true&num=1')
+    .expect(302, done);
 };
 
 exports.test = function() {
@@ -114,6 +132,7 @@ exports.test = function() {
       it('should get tag', blog.tagJson);
       it('should get category', blog.categoryJson);
       it('should get page', blog.pageJson);
+      it('should loved this article response with success', blog.toLove);
     });
   });
 };

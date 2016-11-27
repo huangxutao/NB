@@ -11,6 +11,7 @@ router.get('/page', blog.showPage);
 router.get('/archive', blog.showArchive);
 router.get('/category', blog.showCategory);
 router.get('/tag', blog.showTag);
+router.post('/to-love', blog.toLove);
 
 // 后台管理
 router.get('/do-manage', admin.showIndex);

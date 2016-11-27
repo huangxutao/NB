@@ -95,6 +95,7 @@ function article(req, option) {
         detail: [],
         count: 0,
       },
+      loves: [],
       isDraft: req.body.isDraft
     };
   } else {

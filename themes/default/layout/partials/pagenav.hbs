@@ -1,0 +1,9 @@
+<div class="page-nav">
+  <span>第 {{page.curr_num}} 页 / 共 {{page.count}} 页</span>
+  {{#if page.hasPre}}
+    <a href="/page/?num={{page.pre_num}}" class="pre">上一页</a>
+  {{/if}}
+  {{#if page.hasNext}}
+    <a href="/page/?num={{page.next_num}}" class="next">下一页</a>
+  {{/if}}
+</div>
