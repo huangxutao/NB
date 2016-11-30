@@ -275,6 +275,7 @@ button[name="cancle"]:hover{
   box-sizing: border-box;
   background: #f9fafb;
   overflow: hidden;
+  font-family: monospace;
   z-index: 9;
   transition: all .6s ease;
 }

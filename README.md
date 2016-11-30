@@ -6,9 +6,7 @@
 
 ## Just For Fun
 
-A Node Blog System.
-
-Still Coding...
+A Node Blog System, Current Version 0.0.1
 
 ## Deploy & Basic Usage
 
