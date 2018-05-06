@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <side-bar></side-bar>
-    <main @scroll="toggleMenu">
+    <m-side-bar></m-side-bar>
+    <main @scroll="toggleMenu" ref="mainDom">
       <transition name="fade" mode="out-in">
         <keep-alive include="message,about,links">
           <router-view v-bind:pageNum="pageNum"></router-view>
@@ -17,17 +18,20 @@
 
 <script>
   import SideBar from './components/SideBar'
+  import MSideBar from './components/MSideBar'
 
   export default {
     name: 'app',
 
     components: {
-      sideBar: SideBar
+      sideBar: SideBar,
+      mSideBar: MSideBar
     },
 
     data () {
       return {
-        pageNum: 1
+        pageNum: 1,
+        beforeScrollTop: this.$refs.mainDom ? this.$refs.mainDom.scrollTop : 0
       }
     },
 
@@ -46,12 +50,13 @@
       toggleMenu: function (e) {
         let target = e.target
         let backTop = document.querySelector('.back-top')
+        let scrollTop = target.scrollTop
 
         if (target.tagName !== 'MAIN') return
 
         let clientHeight = document.documentElement.clientHeight
 
-        if (target.scrollTop > clientHeight) {
+        if (target.scrollTop > clientHeight && (scrollTop - this.beforeScrollTop < 0)) {
           backTop.className = 'back-top show'
         } else {
           backTop.className = 'back-top'
@@ -61,6 +66,8 @@
           this.$route.name === 'home') {
           this.pageNum++
         }
+
+        this.beforeScrollTop = scrollTop
       },
 
       toTop: function () {
@@ -130,6 +137,7 @@
 
     transform: translateY(12rem);
     transition: all .32s ease;
+    z-index: -1;
   }
 
   .back-top i{
@@ -170,6 +178,25 @@
 
   .fade-enter-active{
     animation: slideInUp .6s;
+  }
+
+  @media screen and (min-width: 300px) {
+    main {
+      left: 0;
+      padding: 1rem .3rem;
+    }
+
+    .content{
+      margin-top: 1.2rem;
+    }
+    
+    .back-top{
+      right: 0;
+      left: 0;
+      margin: auto;
+      width: 3.2rem;
+      height: 3.2rem;
+    }
   }
   
   @keyframes slideInUp{

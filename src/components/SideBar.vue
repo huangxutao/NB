@@ -52,6 +52,7 @@
     width: 16rem;
     text-align: center;
     box-shadow: 0 0 .8rem #ccc;
+    background: #fff;
   }
 
   aside a{
@@ -134,5 +135,15 @@
   nav a:hover{
     color: #ee7b83;
     background: #eee;
+  }
+
+  @media screen and (min-width: 300px) {
+    aside {
+      display: none;
+    }
+
+    .m-aside{
+      display: block;
+    }
   }
 </style>

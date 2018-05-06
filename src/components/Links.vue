@@ -44,11 +44,6 @@
           name: '黑皮学长 - 七月上',
           url: 'http://imhype.github.io/',
           img: 'http://www.betahouse.us/assets/images/photo/m4/xjy.jpg'
-        },
-        {
-          name: '别样网 - free pic',
-          url: 'http://www.ssyer.com/home-index_l_49.html',
-          img: 'http://www.ssyer.com/images/lee30.png'
         }
       ]
     }
@@ -154,6 +149,30 @@
     88.8%{
       transform: skewX(-0.1953125deg) skewY(-0.1953125deg);
     }
+  }
+
+  @media screen and (min-width: 300px) {
+    .links{
+      padding: 2rem 1rem 1rem;
+    }
+
+    .links ul li{
+      float: none;
+      margin: 1.6rem auto;
+      width: 18rem;
+      height: 18rem;
+      line-height: 18rem;
+    }
+
+    .links ul li img{
+      opacity: 1;
+    }
+    
+    .links ul li a{
+      color: #fff;
+      background: rgba(238, 123, 131, 0.8);
+    }
+    
   }
         
 </style>

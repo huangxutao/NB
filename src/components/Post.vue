@@ -176,4 +176,24 @@
    article footer .next{
     text-align: right;
   }
+
+  @media only screen and (max-width: 640px) {
+    .post{
+      padding: 2rem 0 1rem;
+    }
+
+    .content.post article{
+      padding: 0 1rem;
+    }
+
+    article .post-title{
+      font-size: 1.6rem;
+    }
+
+    article footer .prev, article footer .next{
+      margin: 1.2rem 0;
+      width: 100%;
+      font-size: 14px;
+    }
+  }
 </style>

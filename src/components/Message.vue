@@ -43,4 +43,14 @@
     margin: 4rem auto;
     max-width: 66rem;
   }
+
+  @media screen and (min-width: 300px) {
+    .message{
+      padding: 2rem 1rem 1rem;
+    }
+
+    .message h1{
+      font-size: 22px;
+    }
+  }
 </style>

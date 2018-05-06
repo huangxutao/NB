@@ -39,4 +39,14 @@
     opacity: 1;
     transform: translateX(0);
   }
+
+  @media only screen and (max-width: 640px) {
+    .back-top{
+      right: 0;
+      left: 0;
+      margin: auto;
+      width: 3.2rem;
+      height: 3.2rem;
+    }
+  }
 </style>

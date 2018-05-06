@@ -72,4 +72,10 @@
   .archive p time{
     float: right;
   }
+
+  @media screen and (min-width: 300px) {
+    .archive{
+      padding: 2rem 1rem 1rem;
+    }
+  }
 </style>

@@ -97,3 +97,15 @@
 .markdown-body pre .hljs-comment{
   color: #ccc;
 }
+
+@media screen and (min-width: 300px) {
+
+  .markdown-body h2{
+    font-size: 1.4rem;
+  }
+
+  .markdown-body h3{
+    font-size: 1.3rem;
+  }
+  
+}

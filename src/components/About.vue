@@ -2,14 +2,13 @@
   <div class="content about">
     <h2 id="基本信息">基本信息</h2>
     <ul>
-      <li>子不语，取自清代袁枚文言笔记志怪《子不语》（又名《新齐谐》）</li>
-      <li>本人：⻩徐涛</li>
+      <li>子不语 (⻩徐涛)</li>
       <li>本科 · 杭州电子科技大学 · 信息工程 · 计算机科学与技术</li>
       <li><a href="http://about.hxtao.me/">我的简历</a></li>
     </ul>
     <h2 id="联系方式">联系方式</h2>
     <ul>
-      <li>Email : h784124804@gmail.com</li>
+      <li>Email : hxtao1996@gmail.com</li>
       <li>Tel : 17826800529</li>
       <li>微信 : h784124804</li>
     </ul>
@@ -42,6 +41,12 @@ export default {
 
   .about li img{
     width: 3.2rem;
+  }
+
+  @media screen and (min-width: 300px) {
+    .about{
+      padding: 2rem 1rem 1rem;
+    }
   }
 
 </style>
