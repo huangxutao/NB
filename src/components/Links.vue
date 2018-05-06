@@ -151,7 +151,7 @@
     }
   }
 
-  @media screen and (min-width: 300px) {
+  @media screen and (max-width: 640px) {
     .links{
       padding: 2rem 1rem 1rem;
     }
