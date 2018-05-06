@@ -180,7 +180,7 @@
     animation: slideInUp .6s;
   }
 
-  @media screen and (min-width: 300px) {
+  @media screen and (max-width: 640px) {
     main {
       left: 0;
       padding: 1rem .3rem;

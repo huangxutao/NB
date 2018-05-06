@@ -66,6 +66,7 @@
 
 <style>
   .out-wrapper{
+    display: none;
     position: fixed;
     width: 100%;
     height: auto;      
@@ -216,11 +217,11 @@
     vertical-align: top;
   }
 
-  /* @media screen and (min-width: 300px) {
-    .m-aside{
+  @media screen and (max-width: 640px) {
+    .out-wrapper{
       display: block;
     }
-  } */
+  }
 
   @keyframes circleAnimation{
     0%{

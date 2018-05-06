@@ -137,7 +137,7 @@
     background: #eee;
   }
 
-  @media screen and (min-width: 300px) {
+  @media screen and (max-width: 640px) {
     aside {
       display: none;
     }
