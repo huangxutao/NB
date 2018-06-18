@@ -19,7 +19,7 @@
       <li>未做优化处理也基本没适配移动端</li>
       <li>主要是写到最后突然想 <a href="http://koajs.com/">Koa</a> + Vue 重构前后端，　... RESTful API 配合 JWT ... <img src="https://oblky3j33.qnssl.com/images/11.gif" alt="">有搞头</li>
     </ul>
-    <p class="copyright">© 2017 <i class="iconfont icon-aixin"></i> 子不语</p>
+    <p class="copyright">© 2018 <i class="iconfont icon-aixin"></i> 子不语</p>
   </div>
 </template>
 

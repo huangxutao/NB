@@ -7,7 +7,7 @@
         <time pubdate>{{p.date.publish.slice(5, -14)}}</time>
       </p>
     </section>
-    <p class="copyright">© 2017 <i class="iconfont icon-aixin"></i> 子不语</p>
+    <p class="copyright">© 2018 <i class="iconfont icon-aixin"></i> 子不语</p>
   </div>
 </template>
 
