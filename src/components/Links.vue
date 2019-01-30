@@ -23,7 +23,7 @@
         {
           name: 'β-house',
           url: 'http://betahouse.us/',
-          img: 'https://oblky3j33.qnssl.com/images/favicon-beta.png'
+          img: 'http://cdn.hxtao.xyz/images/favicon-beta.png'
         },
         {
           name: '麻组 - 小麻雀',

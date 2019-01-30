@@ -1,6 +1,6 @@
 <template>
   <div class="content message">
-    <h1>你就这样走了吗 <img src="https://oblky3j33.qnssl.com/images/11.gif" alt=""></h1>
+    <h1>你就这样走了吗 <img src="http://cdn.hxtao.xyz/images/11.gif" alt=""></h1>
     <div class="comment">
      <div id="disqus_thread"></div>
     </div>
