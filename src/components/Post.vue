@@ -71,6 +71,8 @@
         let url = 'https://old-blog.hxtao.xyz/post/?json=true&article=' + this.$route.params.id
 
         Ajax.get(url).then((data) => {
+          data.article.curr.content.html = data.article.curr.content.html.replace(/https:\/\/oblky3j33.qnssl.com/g, 'http://cdn.hxtao.xyz/')
+
           this.prevPost = data.article.pre
           this.currPost = data.article.curr
           this.nextPost = data.article.next

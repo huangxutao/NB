@@ -57,6 +57,10 @@
 
         this.loading = true
         Ajax.get(url).then((data) => {
+          data.posts.forEach(p => {
+            p.wrapper = p.wrapper.replace(/https:\/\/oblky3j33.qnssl.com/g, 'http://cdn.hxtao.xyz/')
+            p.content.summary.html = p.content.summary.html.replace(/https:\/\/oblky3j33.qnssl.com/g, 'http://cdn.hxtao.xyz/')
+          })
           this.page = data.page
           this.posts = this.posts.concat(data.posts)
           this.loading = false
