@@ -25,7 +25,7 @@
     },
     methods: {
       getPosts: function (page) {
-        let url = 'https://blog.hxtao.site/archive/?json=true'
+        let url = 'https://old-blog.hxtao.xyz/archive/?json=true'
 
         Ajax.get(url).then((data) => {
           this.items = data.posts

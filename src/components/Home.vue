@@ -51,7 +51,7 @@
     },
     methods: {
       getPosts: function (page) {
-        let url = 'https://blog.hxtao.site/page/?json=true&num=' + page
+        let url = 'https://old-blog.hxtao.xyz/page/?json=true&num=' + page
 
         if (!this.page.hasNext) return
 

@@ -68,7 +68,7 @@
 
     methods: {
       getPost () {
-        let url = 'https://blog.hxtao.site/post/?json=true&article=' + this.$route.params.id
+        let url = 'https://old-blog.hxtao.xyz/post/?json=true&article=' + this.$route.params.id
 
         Ajax.get(url).then((data) => {
           this.prevPost = data.article.pre
