@@ -31,7 +31,12 @@
           img: 'http://www.betahouse.us/assets/images/photo/m3/mkq.jpg'
         },
         {
-          name: '涛哥 - 皮蛋粥',
+          name: '醉墨的溪谷',
+          url: 'https://www.zuimo.me/',
+          img: 'https://www.zuimo.me/static/upload/20180716/logo.png'
+        },
+        {
+          name: '皮蛋粥',
           url: 'http://js-ninja.cn/',
           img: 'http://www.betahouse.us/assets/images/photo/m5/zyt.jpg'
         },
